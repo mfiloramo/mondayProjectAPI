@@ -72,9 +72,10 @@ jobs:
       - name: Zip the deploy folder
         run: zip -r deploy.zip ./deploy
 
-      - name: Deploy To Azure Web App Using Kudu
+      - name: Deploy To Azure Web Apps
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)/deploy.zip --type zip
+          TOKEN=$(az account get-access-token --query accessToken -o tsv)
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@./dist" https://monday-server.scm.azurewebsites.net/api/zipdeploy
 
       - name: Fetch Deployment Logs
         run: |
