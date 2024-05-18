@@ -58,9 +58,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          ls
-          cd ..
-          ls
+          cd mondayProjectAPI
           npm install
 
       - name: Deploy To Azure Web App
