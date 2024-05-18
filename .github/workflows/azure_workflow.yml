@@ -29,10 +29,8 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          mkdir -p ./dist
           cp package.json ./dist
           cp package-lock.json ./dist
-          cp -r dist/* ./dist
 
       - name: Verify dist Directory Contents
         run: |
