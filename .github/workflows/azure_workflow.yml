@@ -63,7 +63,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          npm ci
+          npm install
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
