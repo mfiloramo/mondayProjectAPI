@@ -30,9 +30,12 @@ jobs:
       - name: Prepare For Deployment
         run: |
           mkdir -p dist/src
-          cp -r src/* dist/src/
-          cp package.json dist/
-          cp package-lock.json dist/
+          cp -r * dist/src/
+          mv dist/src/package.json dist/
+          mv dist/src/package-lock.json dist/
+          mv dist/src/node_modules dist/
+          find dist/src -maxdepth 1 -type d ! -name src -exec rm -r {} +
+          find dist/src -maxdepth 1 -type f -exec rm -r {} +
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
