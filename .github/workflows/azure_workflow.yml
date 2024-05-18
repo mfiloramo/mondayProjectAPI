@@ -32,7 +32,7 @@ jobs:
           mkdir -p ./dist/src
           cp package.json ./dist
           cp package-lock.json ./dist
-          mv ./* ./dist/src
+          rsync -av --progress --exclude=dist . ./dist/src
           mv ./dist/src/dist/* ./dist
           rm -rf ./dist/src/dist
 
