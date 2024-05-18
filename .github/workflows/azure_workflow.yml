@@ -53,6 +53,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Extract Build Artifacts
+        run: unzip dist/release.zip -d dist
+        if: exists('dist/release.zip')
+
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
         uses: azure/webapps-deploy@v2
