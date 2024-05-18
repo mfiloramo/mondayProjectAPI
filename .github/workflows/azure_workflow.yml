@@ -63,8 +63,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd ./dist
-          npm install
+          npm ci
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
@@ -72,5 +71,5 @@ jobs:
         with:
           app-name: monday-server
           slot-name: Production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C79D9D0D4BD7440286621DE2B4FFAFFC }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: dist
