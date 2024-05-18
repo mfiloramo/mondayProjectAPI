@@ -29,8 +29,15 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
+          mkdir -p ./dist
           cp package.json ./dist
           cp package-lock.json ./dist
+          cp -r dist/* ./dist
+
+      - name: Verify dist Directory Contents
+        run: |
+          echo "Contents of dist directory:"
+          ls -R dist
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
@@ -78,6 +85,6 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./dist
 
-#      - name: Verify wwwroot Directory Contents
-#        run: |
-#          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/zipdeploy/wwwroot
+      - name: Verify Deployment
+        run: |
+          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.azurewebsites.net
