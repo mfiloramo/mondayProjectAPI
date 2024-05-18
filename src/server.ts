@@ -1,25 +1,26 @@
 // MODULE IMPORTS
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import http from 'http';
 import cors, { CorsOptions } from 'cors';
 
 // ROUTER IMPORTS
-import { fragrancesRouter } from "./routes/fragrances.router";
-import { ordersRouter } from "./routes/orders.router";
+import { fragrancesRouter } from './routes/fragrances.router';
+import { ordersRouter } from './routes/orders.router';
 
 // GLOBAL VARIABLES
 const app: Express = express();
 const PORT: number = 3010;
-const server: any = http.createServer(app);
+const server = http.createServer(app);
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://monday-project-jpm952pwp-mfiloramos-projects.vercel.app', 'https://monday-project.vercel.app'],
   optionsSuccessStatus: 200,
   credentials: true,
-  methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],
-  allowedHeaders: [ 'Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept' ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
 };
+
 app.use(express.json());
 app.use(cors(corsOptions));
 
@@ -32,11 +33,11 @@ app
 app.options('*', cors(corsOptions));
 
 // WILDCARD ENDPOINT
-app.use('*', (req: any, res: any): void => {
+app.use('*', (req: Request, res: Response): void => {
   res.status(404).send('Resource not found');
 });
 
 // RUN SERVER ON SPECIFIED PORT
 server.listen(PORT, (): void => {
-  console.log(`Server listening on port: ${ PORT }...`);
+  console.log(`Server listening on port: ${PORT}...`);
 });
