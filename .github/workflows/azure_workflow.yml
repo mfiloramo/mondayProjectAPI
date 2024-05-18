@@ -63,8 +63,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          ls
-          cd ..
+          cd ./dist
           ls
           npm install
 
