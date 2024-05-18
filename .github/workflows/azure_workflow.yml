@@ -69,7 +69,7 @@ jobs:
 
       - name: Deploy To Azure Web App Using CLI
         run: |
-          az webapp deployment source --resource-group monday-interview --name monday-server --src dist
+          az webapp deployment source config-zip --resource-group monday-interview --name monday-server --src dist
 
       - name: Fetch Deployment Logs
         run: |
