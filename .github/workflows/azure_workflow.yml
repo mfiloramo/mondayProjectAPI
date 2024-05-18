@@ -29,13 +29,18 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          cp package.json ./dist
-          cp package-lock.json ./dist
+          mkdir dist
+          cp -r * dist/
+          cp -r .[^.]* dist/
+          rm -rf dist/node_modules
+          rm -rf dist/.git
+          rm -rf dist/.github
 
       - name: Log Dist Directory (Before Upload)
         run: |
           echo "Contents of dist directory before upload:"
           ls -al ./dist
+          ls -al ./dist/src
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
@@ -61,6 +66,7 @@ jobs:
         run: |
           echo "Contents of dist directory after download:"
           ls -al ./dist
+          ls -al ./dist/src
 
       - name: Azure Login
         uses: azure/login@v1
@@ -74,7 +80,7 @@ jobs:
       - name: Deploy To Azure Web App Using Kudu
         run: |
           TOKEN=$(az account get-access-token --query accessToken -o tsv)
-          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@./dist" https://monday-server.scm.azurewebsites.net/api/zipdeploy
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@dist.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
 
       - name: Fetch Deployment Logs
         run: |
