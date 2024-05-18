@@ -31,6 +31,7 @@ jobs:
         run: |
           cp package.json ./dist
           cp package-lock.json ./dist
+          zip -r app.zip ./dist
 
       - name: Log Dist Directory (Before Upload)
         run: |
@@ -41,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: dist
+          path: app.zip
 
   deploy_application:
     runs-on: ubuntu-latest
@@ -49,34 +50,28 @@ jobs:
     name: Deploy Application
     environment:
       name: Production
-      url: ${{ steps.DeployToAzureWebApp.outputs.webapp-url }}
 
     steps:
       - name: Download Artifact From Build Job
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: app.zip
 
       - name: Log Dist Directory (After Download)
         run: |
           echo "Contents of dist directory after download:"
-          ls -al ./dist
+          unzip -l app.zip
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Install Dependencies
-        working-directory: ./dist
-        run: npm install
+      - name: Deploy To Azure Web App Using CLI
+        run: |
+          az webapp deployment source config-zip --resource-group monday-interview --name monday-server --src app.zip
 
-      - name: Deploy To Azure Web App
-        id: DeployToAzureWebApp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: monday-server
-          slot-name: Production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./dist
+      - name: Fetch Deployment Logs
+        run: |
+          az webapp log deployment show --resource-group monday-interview --name monday-server
