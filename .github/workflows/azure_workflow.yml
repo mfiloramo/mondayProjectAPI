@@ -60,8 +60,4 @@ jobs:
 
       - name: Deploy To Azure Web App
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)/dist --type zip
-
-      - name: Fetch Deployment Logs
-        run: |
-          az webapp log deployment show --resource-group monday-interview --name monday-server
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path ./dist --type zip
