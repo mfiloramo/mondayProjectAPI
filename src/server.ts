@@ -15,16 +15,16 @@ const PORT: string | number = process.env.PORT || 3011;
 const server = http.createServer(app);
 
 // CORS MIDDLEWARE
-const corsOptions: CorsOptions = {
-  origin: ['http://localhost:3001', 'https://monday-project-jpm952pwp-mfiloramos-projects.vercel.app', 'https://monday-project-nfepi71jf-mfiloramos-projects.vercel.app/', 'https://monday-project.vercel.app'],
-  optionsSuccessStatus: 200,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
-};
+// const corsOptions: CorsOptions = {
+//   origin: ['http://localhost:3001', 'https://monday-project-jpm952pwp-mfiloramos-projects.vercel.app', 'https://monday-project-nfepi71jf-mfiloramos-projects.vercel.app/', 'https://monday-project.vercel.app'],
+//   optionsSuccessStatus: 200,
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+// };
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 // SERVER ROUTES
 app
@@ -32,7 +32,7 @@ app
   .use('/api/orders', ordersRouter);
 
 // HANDLE PREFLIGHT REQUESTS
-app.options('*', cors(corsOptions));
+app.options('*', cors());
 
 // WILDCARD ENDPOINT
 app.use('*', (req: Request, res: Response): void => {
