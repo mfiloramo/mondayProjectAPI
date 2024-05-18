@@ -32,6 +32,11 @@ jobs:
           cp package.json ./dist
           cp package-lock.json ./dist
 
+      - name: Log Dist Directory (Before Upload)
+        run: |
+          echo "Contents of dist directory before upload:"
+          ls -al ./dist
+
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
         with:
@@ -47,14 +52,16 @@ jobs:
       url: ${{ steps.DeployToAzureWebApp.outputs.webapp-url }}
 
     steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-
       - name: Download Artifact From Build Job
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: ./dist
+          path: dist
+
+      - name: Log Dist Directory (After Download)
+        run: |
+          echo "Contents of dist directory after download:"
+          ls -al ./dist
 
       - name: Azure Login
         uses: azure/login@v1
@@ -62,10 +69,8 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Install Dependencies
-        run: |
-          cd ./dist
-          ls
-          npm install
+        working-directory: ./dist
+        run: npm install
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
@@ -74,4 +79,4 @@ jobs:
           app-name: monday-server
           slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: dist
+          package: ./dist
