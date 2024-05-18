@@ -61,5 +61,5 @@ jobs:
       - name: Deploy To Azure Web App Using Kudu
         run: |
           TOKEN=$(az account get-access-token --query accessToken -o tsv)
-          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@./dist" https://monday-server.scm.azurewebsites.net/api/zipdeploy
-
+          zip -r dist_artifact.zip dist_artifact
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@dist_artifact.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
