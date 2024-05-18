@@ -70,7 +70,9 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Zip the deploy folder
-        run: zip -r deploy.zip ./deploy
+        run: |
+          cd ./deploy
+          zip -r ../deploy.zip .
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
@@ -83,4 +85,4 @@ jobs:
 
       - name: Fetch Deployment Logs
         run: |
-          az webapp log deployment show --resource-group <your-resource-group> --name <your-app-name>
+          az webapp log deployment show --resource-group monday-interview --name monday-server
