@@ -29,21 +29,12 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          mkdir -p dist/src
-          cp -r src/config dist/src/
-          cp -r src/controllers dist/src/
-          cp -r src/routes dist/src/
-          cp src/server.ts dist/src/
-          cp .gitignore dist/
-          cp package.json dist/
-          cp package-lock.json dist/
-          cp tsconfig.json dist/
+          cp package.json ./dist
+          cp package-lock.json ./dist
 
-          echo "Contents of src directory before copying:"
-          ls -R src
-          
-          echo "Contents of dist/src directory after copying:"
-          ls -R dist/src
+          # DEBUG: LOG DIR CONTENTS
+          echo "Contents of current dir:"
+          ls -R .
           
           echo "Contents of dist directory:"
           ls -R dist
