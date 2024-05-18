@@ -29,9 +29,12 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
+          mkdir -p ./dist/src
           cp package.json ./dist
           cp package-lock.json ./dist
-          rsync -av --progress ./ ./dist --exclude node_modules --exclude dist
+          mv ./* ./dist/src
+          mv ./dist/src/dist/* ./dist
+          rm -rf ./dist/src/dist
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
