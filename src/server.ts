@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: ['http://localhost:3001', 'https://monday-project-jpm952pwp-mfiloramos-projects.vercel.app', 'https://monday-project.vercel.app'],
+  origin: ['http://localhost:3001', 'https://monday-project-jpm952pwp-mfiloramos-projects.vercel.app', 'https://monday-project-nfepi71jf-mfiloramos-projects.vercel.app/', 'https://monday-project.vercel.app'],
   optionsSuccessStatus: 200,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
