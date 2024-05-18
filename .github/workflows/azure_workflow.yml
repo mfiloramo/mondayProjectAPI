@@ -70,13 +70,14 @@ jobs:
           npm ci
 
       - name: Deploy To Azure Web App
-        run: |
-          TOKEN=$(az account get-access-token --query accessToken -o tsv)
-          zip -r dist.zip dist
-          echo "Contents of dist.zip:"
-          unzip -l dist.zip
-          curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@dist.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
+        id: DeployToAzureWebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: LingoLinkAPI
+          slot-name: Production
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: ./dist
 
-      - name: Verify wwwroot Directory Contents
-        run: |
-          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/zipdeploy/wwwroot
+#      - name: Verify wwwroot Directory Contents
+#        run: |
+#          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/zipdeploy/wwwroot
