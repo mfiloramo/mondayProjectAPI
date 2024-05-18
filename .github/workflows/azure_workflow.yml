@@ -51,7 +51,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: ./artifact
+          path: dist_artifact
 
       - name: Azure Login
         uses: azure/login@v1
@@ -60,6 +60,5 @@ jobs:
 
       - name: Deploy To Azure Web App
         run: |
-          mv ./artifact/* ./dist/
-          ls ./dist
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path ./dist --type static
+          ls dist_artifact
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path dist_artifact --type static
