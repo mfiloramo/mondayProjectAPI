@@ -61,12 +61,6 @@ jobs:
           name: build
           path: deploy.zip
 
-      - name: Verify Deploy Zip After Download
-        run: |
-          echo "Contents of deploy.zip after download:"
-          unzip -l deploy.zip
-          ls -al deploy.zip
-
       - name: Azure Login
         uses: azure/login@v1
         with:
