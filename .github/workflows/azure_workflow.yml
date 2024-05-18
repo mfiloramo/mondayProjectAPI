@@ -57,18 +57,23 @@ jobs:
           name: build
           path: dist
 
+      - name: Log Dist Directory (After Download)
+        run: |
+          echo "Contents of dist directory after download:"
+          ls -al dist
+
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Install Dependencies
-        working-directory: ./dist
+        working-directory: dist
         run: npm install
 
       - name: Deploy To Azure Web App Using Azure CLI
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path ./dist --type static
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)/dist --type static
 
       - name: Fetch Deployment Logs
         run: |
