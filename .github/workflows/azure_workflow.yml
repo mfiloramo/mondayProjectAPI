@@ -60,7 +60,7 @@ jobs:
       - name: Log Dist Directory (After Download)
         run: |
           echo "Contents of dist directory after download:"
-          ls -al dist
+          ls -al ./dist
 
       - name: Azure Login
         uses: azure/login@v1
@@ -71,9 +71,10 @@ jobs:
         working-directory: dist
         run: npm install
 
-      - name: Deploy To Azure Web App Using Azure CLI
+      - name: Deploy To Azure Web App Using Kudu
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)/dist --type static
+          TOKEN=$(az account get-access-token --query accessToken -o tsv)
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@./dist" https://monday-server.scm.azurewebsites.net/api/zipdeploy
 
       - name: Fetch Deployment Logs
         run: |
