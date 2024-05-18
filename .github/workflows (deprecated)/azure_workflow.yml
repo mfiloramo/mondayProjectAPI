@@ -66,3 +66,5 @@ jobs:
           app-name: 'monday-server'
           slot-name: 'production'
           package: .
+
+#
