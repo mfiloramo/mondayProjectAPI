@@ -58,8 +58,8 @@ jobs:
 
       - name: Clean wwwroot Directory
         run: |
-          az webapp config appsettings set --name monday-server --resource-group monday-server --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
-          az webapp config storage-account delete --name monday-server --resource-group monday-server --slot Production
+          az webapp config appsettings set --name monday-server --resource-group monday-interview --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+          az webapp config storage-account delete --name monday-server --resource-group monday-interview --slot Production
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
