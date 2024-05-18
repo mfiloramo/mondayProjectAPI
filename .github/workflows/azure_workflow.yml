@@ -19,7 +19,7 @@ jobs:
           node-version: 20.x
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build Application
         run: npm run build
@@ -55,6 +55,12 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Clean wwwroot Directory
+        run: |
+          az webapp create --name monday-server --resource-group <YOUR_RESOURCE_GROUP> --plan <YOUR_APP_SERVICE_PLAN>
+          az webapp delete --name monday-server --resource-group <YOUR_RESOURCE_GROUP>
+          az webapp create --name monday-server --resource-group <YOUR_RESOURCE_GROUP> --plan <YOUR_APP_SERVICE_PLAN>
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
