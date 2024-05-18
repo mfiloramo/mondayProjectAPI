@@ -29,14 +29,15 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          cp package.json ./dist
-          cp package-lock.json ./dist
+          mkdir -p deploy
+          cp -r ./* ./deploy
+          cp -r ./dist/* ./deploy
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ./dist
+          path: ./deploy
           if-no-files-found: error
 
   deploy_application:
@@ -51,7 +52,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist_artifact
+          path: deploy_artifact
 
       - name: Azure Login
         uses: azure/login@v1
@@ -61,5 +62,7 @@ jobs:
       - name: Deploy To Azure Web App Using Kudu
         run: |
           TOKEN=$(az account get-access-token --query accessToken -o tsv)
-          zip -r dist_artifact.zip dist_artifact
-          curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@dist_artifact.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
+          cd deploy_artifact
+          zip -r ../deploy_artifact.zip .
+          cd ..
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@deploy_artifact.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
