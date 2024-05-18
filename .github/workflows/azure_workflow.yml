@@ -30,16 +30,16 @@ jobs:
       - name: Prepare For Deployment
         run: |
           mkdir -p deploy
-          cp -r package.json package-lock.json src deploy/
-          cp -r dist/* deploy/
+          cp -r package.json package-lock.json src dist/* deploy/
           cd deploy
           zip -r ../deploy.zip .
           cd ..
 
-      - name: Log Deploy Directory (Before Upload)
+      - name: Verify Deploy Zip
         run: |
-          echo "Contents of deploy directory before upload:"
-          ls -al ./deploy
+          echo "Contents of deploy.zip:"
+          unzip -l deploy.zip
+          ls -al deploy.zip
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
@@ -61,6 +61,12 @@ jobs:
           name: build
           path: deploy.zip
 
+      - name: Verify Deploy Zip After Download
+        run: |
+          echo "Contents of deploy.zip after download:"
+          unzip -l deploy.zip
+          ls -al deploy.zip
+
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -68,7 +74,7 @@ jobs:
 
       - name: Deploy To Azure Web App Using Kudu
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path deploy.zip --type zip
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)/deploy.zip --type zip
 
       - name: Fetch Deployment Logs
         run: |
