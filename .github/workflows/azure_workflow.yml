@@ -71,7 +71,7 @@ jobs:
 
       - name: Zip the deploy folder
         run: |
-          cd ./deploy
+          cd deploy
           zip -r ../deploy.zip .
 
       - name: Deploy To Azure Web App
@@ -82,7 +82,3 @@ jobs:
           slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: deploy.zip
-
-      - name: Fetch Deployment Logs
-        run: |
-          az webapp log deployment show --resource-group monday-interview --name monday-server
