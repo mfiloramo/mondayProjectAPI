@@ -58,7 +58,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy To Azure Web App
+      - name: Deploy To Azure Web App Using Kudu
         run: |
-          ls dist_artifact
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path dist_artifact --type static
+          TOKEN=$(az account get-access-token --query accessToken -o tsv)
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@./dist" https://monday-server.scm.azurewebsites.net/api/zipdeploy
+
