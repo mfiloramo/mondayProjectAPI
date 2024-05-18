@@ -60,4 +60,5 @@ jobs:
 
       - name: Deploy To Azure Web App
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path dist --type zip
+          ls
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path ./dist --type zip
