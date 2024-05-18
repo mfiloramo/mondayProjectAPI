@@ -44,7 +44,6 @@ jobs:
     needs: build_application
     name: Deploy Application
     environment:
-      name: Production
       url: ${{ steps.DeployToAzureWebApp.outputs.webapp-url }}
 
     steps:
