@@ -29,20 +29,21 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          cp package.json ./dist
-          cp package-lock.json ./dist
-          cp -r node_modules ./dist # Include node_modules if necessary for production
+          mkdir -p ./deploy
+          cp -r ./dist/* ./deploy/
+          cp package.json ./deploy/
+          cp package-lock.json ./deploy/
 
-      - name: Log Dist Directory (Before Upload)
+      - name: Log Deploy Directory (Before Upload)
         run: |
-          echo "Contents of dist directory before upload:"
-          ls -al ./dist
+          echo "Contents of deploy directory before upload:"
+          ls -al ./deploy
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ./dist
+          path: ./deploy
 
   deploy_application:
     runs-on: ubuntu-latest
@@ -56,25 +57,25 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: ./dist
+          path: ./deploy
 
-      - name: Log Dist Directory (After Download)
+      - name: Log Deploy Directory (After Download)
         run: |
-          echo "Contents of dist directory after download:"
-          ls -al ./dist
+          echo "Contents of deploy directory after download:"
+          ls -al ./deploy
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Zip the dist folder
-        run: zip -r dist.zip ./dist
+      - name: Zip the deploy folder
+        run: zip -r deploy.zip ./deploy
 
       - name: Deploy To Azure Web App Using Kudu
         run: |
           TOKEN=$(az account get-access-token --query accessToken -o tsv)
-          curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@dist.zip" https://<your-app-name>.scm.azurewebsites.net/api/zipdeploy
+          curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@deploy.zip" https://<your-app-name>.scm.azurewebsites.net/api/zipdeploy
 
       - name: Fetch Deployment Logs
         run: |
