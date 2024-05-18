@@ -29,20 +29,12 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          mkdir -p dist/src
-          mv src/config dist/src/
-          mv src/controllers dist/src/
-          mv src/routes dist/src/
-          mv src/server.js dist/src/
-          
-          cp package.json dist/
-          cp package-lock.json dist/
+          cp package.json ./dist
+          cp package-lock.json ./dist
 
           # DEBUG: LOG DIR CONTENTS
           echo "Contents of dist directory:"
           ls -R dist
-          echo "Contents of dist/src directory:"
-          ls -R dist/src
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
@@ -85,4 +77,4 @@ jobs:
 
       - name: Verify wwwroot Directory Contents
         run: |
-          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/vfs/site/wwwroot/
+          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/zipdeploy/wwwroot
