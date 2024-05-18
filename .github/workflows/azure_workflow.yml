@@ -54,9 +54,8 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Install Dependencies
-        run: |
-          cd ..
-          npm install
+        working-directory: dist
+        run: npm install
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
