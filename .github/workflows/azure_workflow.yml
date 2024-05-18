@@ -27,6 +27,11 @@ jobs:
       - name: Run Tests
         run: npm run test --if-present
 
+      - name: Prepare For Deployment
+        run: |
+          cp package.json ./dist
+          cp package-lock.json ./dist
+
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
         with:
@@ -58,6 +63,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          cd ./dist
           npm install
 
       - name: Deploy To Azure Web App
