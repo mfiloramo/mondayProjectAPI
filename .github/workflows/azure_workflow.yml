@@ -72,10 +72,14 @@ jobs:
       - name: Zip the deploy folder
         run: zip -r deploy.zip ./deploy
 
-      - name: Deploy To Azure Web Apps
-        run: |
-          TOKEN=$(az account get-access-token --query accessToken -o tsv)
-          curl -X POST -H "Authorization: Bearer $TOKEN" -F "path=site/wwwroot" -F "file=@./dist" https://monday-server.scm.azurewebsites.net/api/zipdeploy
+      - name: Deploy To Azure Web App
+        id: DeployToAzureWebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: monday-server
+          slot-name: Production
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: deploy.zip
 
       - name: Fetch Deployment Logs
         run: |
