@@ -30,19 +30,18 @@ jobs:
       - name: Prepare For Deployment
         run: |
           mkdir -p dist/src
-          mv src/config dist/src/
-          mv src/controllers dist/src/
-          mv src/routes dist/src/
-          mv src/server.js dist/src/
-          
+          cp -r src/config dist/src/
+          cp -r src/controllers dist/src/
+          cp -r src/routes dist/src/
+          cp src/server.js dist/src/
+
           cp package.json dist/
           cp package-lock.json dist/
+          cp tsconfig.json dist/
 
           # DEBUG: LOG DIR CONTENTS
           echo "Contents of dist directory:"
           ls -R dist
-          echo "Contents of dist/src directory:"
-          ls -R dist/src
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
@@ -83,6 +82,12 @@ jobs:
           unzip -l dist_artifact.zip
           curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@dist_artifact.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
 
+      - name: Install Dependencies on Azure
+        run: |
+          TOKEN=$(az account get-access-token --query accessToken -o tsv)
+          curl -X POST -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/command -d '{"command":"npm install"}'
+
       - name: Verify wwwroot Directory Contents
         run: |
-          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/zipdeploy/wwwroot
+          TOKEN=$(az account get-access-token --query accessToken -o tsv)
+          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/vfs/site/wwwroot/
