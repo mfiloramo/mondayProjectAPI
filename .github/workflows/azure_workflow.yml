@@ -45,7 +45,6 @@ jobs:
     name: Deploy Application
     environment:
       name: Production
-      url: ${{ steps.DeployToAzureWebApp.outputs.webapp-url }}
 
     steps:
       - name: Download Artifact From Build Job
@@ -59,11 +58,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Install Dependencies
-        run: |
-          cd ./dist
-          npm ci
-
       - name: Deploy To Azure Web App
         run: |
-          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)/dist --type zip
+
+      - name: Fetch Deployment Logs
+        run: |
+          az webapp log deployment show --resource-group monday-interview --name monday-server
