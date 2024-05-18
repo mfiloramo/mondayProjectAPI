@@ -30,13 +30,13 @@ jobs:
       - name: Prepare For Deployment
         run: |
           mkdir -p dist/src
-          shopt -s extglob
-          cp -r !(dist|node_modules|.git|package.json|package-lock.json) dist/src/
+          cp -r src dist/
+          cp .gitignore dist/
           cp package.json dist/
           cp package-lock.json dist/
-          cd dist/
-          ls
-          cd ..
+          cp tsconfig.json dist/
+          ls dist
+          ls dist/src
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
