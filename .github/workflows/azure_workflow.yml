@@ -19,16 +19,13 @@ jobs:
           node-version: 20.x
 
       - name: Install Dependencies
-        run: |
-          npm install
+        run: npm install
 
       - name: Build Application
-        run: |
-          npm run build
+        run: npm run build
 
       - name: Run Tests
-        run: |
-          npm run test --if-present
+        run: npm run test --if-present
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
@@ -57,9 +54,8 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Install Dependencies
-        run: |
-          cd dist
-          npm install
+        run: npm install
+        working-directory: dist
 
       - name: Deploy To Azure Web App
         id: DeployToAzureWebApp
@@ -68,4 +64,4 @@ jobs:
           app-name: monday-server
           slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C79D9D0D4BD7440286621DE2B4FFAFFC }}
-          package: .
+          package: dist
