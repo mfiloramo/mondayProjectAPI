@@ -29,7 +29,6 @@ jobs:
 
       - name: Prepare For Deployment
         run: |
-          mkdir dist
           cp -r * dist/
           cp -r .[^.]* dist/
           rm -rf dist/node_modules
