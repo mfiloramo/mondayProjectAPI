@@ -73,7 +73,7 @@ jobs:
         id: DeployToAzureWebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: LingoLinkAPI
+          app-name: monday-server
           slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./dist
