@@ -65,9 +65,5 @@ jobs:
           npm ci
 
       - name: Deploy To Azure Web App
-        id: DeployToAzureWebApp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: monday-server
-          slot-name: Production
-          package: ./dist
+        run: |
+          az webapp deploy --resource-group monday-interview --name monday-server --src-path $(pwd)
