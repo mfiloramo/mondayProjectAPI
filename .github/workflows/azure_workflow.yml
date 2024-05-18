@@ -34,6 +34,9 @@ jobs:
           cp -r !(dist|node_modules|.git|package.json|package-lock.json) dist/src/
           cp package.json dist/
           cp package-lock.json dist/
+          cd dist/
+          ls
+          cd ..
 
       - name: Upload Artifact For Deployment Job
         uses: actions/upload-artifact@v2
