@@ -1,0 +1,8 @@
+# NODE MODULE DIRECTORY
+node_modules
+
+# LOCAL ENVIRONMENT VARIABLES
+.env
+
+# TSC BUILD
+build
