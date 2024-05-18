@@ -34,7 +34,7 @@ jobs:
           mv dist/controllers dist/src/
           mv dist/routes dist/src/
           mv dist/server.js dist/src/
-
+          
           cp package.json dist/
           cp package-lock.json dist/
 
@@ -74,19 +74,6 @@ jobs:
         run: |
           echo "Contents of downloaded artifact:"
           ls -R dist_artifact
-
-      - name: Organize Artifact Contents
-        run: |
-          mkdir -p dist_artifact/src
-          mv dist_artifact/config dist_artifact/src/
-          mv dist_artifact/controllers dist_artifact/src/
-          mv dist_artifact/routes dist_artifact/src/
-          mv dist_artifact/server.js dist_artifact/src/
-
-          echo "Contents of dist_artifact directory after organizing:"
-          ls -R dist_artifact
-          echo "Contents of dist_artifact/src directory:"
-          ls -R dist_artifact/src
 
       - name: Deploy To Azure Web App
         run: |
