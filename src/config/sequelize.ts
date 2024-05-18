@@ -1,4 +1,4 @@
-import { Sequelize as SequelizeInstance } from 'src/config/sequelize';
+import { Sequelize as SequelizeInstance } from 'sequelize';
 import dotenv from 'dotenv';
 
 dotenv.config();
