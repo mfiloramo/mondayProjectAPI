@@ -11,7 +11,7 @@ import { ordersRouter } from './routes/orders.router';
 
 // GLOBAL VARIABLES
 const app: Express = express();
-const PORT: number = 3010;
+const PORT: number = process.env.PORT || 3001;
 const server = http.createServer(app);
 
 // CORS MIDDLEWARE
