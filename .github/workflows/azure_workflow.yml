@@ -74,8 +74,19 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Verify Downloaded Artifact
+        run: |
+          echo "Contents of downloaded artifact:"
+          ls -R dist_artifact
+
       - name: Deploy To Azure Web App
         run: |
           TOKEN=$(az account get-access-token --query accessToken -o tsv)
           zip -r dist_artifact.zip dist_artifact
+          echo "Contents of dist_artifact.zip:"
+          unzip -l dist_artifact.zip
           curl -X POST -H "Authorization: Bearer $TOKEN" -F "file=@dist_artifact.zip" https://monday-server.scm.azurewebsites.net/api/zipdeploy
+
+      - name: Verify wwwroot Directory Contents
+        run: |
+          curl -X GET -H "Authorization: Bearer $TOKEN" https://monday-server.scm.azurewebsites.net/api/zipdeploy/wwwroot
