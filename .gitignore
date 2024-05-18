@@ -9,3 +9,6 @@ build
 
 # IDE CONFIGURATION
 .idea
+
+# APPLICATION BUILD
+.dist
