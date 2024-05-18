@@ -7,6 +7,8 @@ import cors, { CorsOptions } from 'cors';
 import { fragrancesRouter } from './routes/fragrances.router';
 import { ordersRouter } from './routes/orders.router';
 
+// TOMATO
+
 // GLOBAL VARIABLES
 const app: Express = express();
 const PORT: number = 3010;
