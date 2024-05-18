@@ -30,7 +30,7 @@ jobs:
       - name: Prepare For Deployment
         run: |
           mkdir -p deploy
-          cp -r ./* ./deploy
+          rsync -av --exclude='deploy' . ./deploy/
           cp -r ./dist/* ./deploy
 
       - name: Upload Artifact For Deployment Job
