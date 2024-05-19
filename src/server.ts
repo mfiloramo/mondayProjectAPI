@@ -7,14 +7,12 @@ import cors, { CorsOptions } from 'cors';
 import { fragrancesRouter } from './routes/fragrances.router';
 import { ordersRouter } from './routes/orders.router';
 
-// TOMATO
-
 // GLOBAL VARIABLES
 const app: Express = express();
-const PORT: string | number = process.env.PORT || 3011;
+const PORT: string | number = process.env.PORT || 3046;
 const server = http.createServer(app);
 
-// CORS MIDDLEWARE
+// DISABLED FOR DEMO: CORS MIDDLEWARE
 // const corsOptions: CorsOptions = {
 //   origin: ['http://localhost:3001', 'https://monday-project-jpm952pwp-mfiloramos-projects.vercel.app', 'https://monday-project-nfepi71jf-mfiloramos-projects.vercel.app/', 'https://monday-project.vercel.app'],
 //   optionsSuccessStatus: 200,

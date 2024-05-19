@@ -11,52 +11,30 @@ const mondayApiToken: AxiosInstance = axios.create({
   }
 });
 
+
 export const selectAllFragrances = async (req: Request, res: Response): Promise<void> => {
   try {
-    // SELECT ALL FRAGRANCES IN DATABASE
+    // SELECT ALL ORDERS IN DATABASE
     const selectAll = await sequelize.query('EXECUTE GetAllFragrances');
-
-    // MONDAY.COM API INTEGRATION
-    const query: string = `
-      {
-        boards (ids: [${process.env.BOARD_ID_FRAGRANCES}]) {
-          items {
-            id
-            name
-            column_values {
-              id
-              text
-            }
-          }
-        }
-      }`;
-
-    let mondayApiResponse: any = {};
-    if (apiToken) {
-      const response = await mondayApiToken.post('', { query });
-      mondayApiResponse = response.data;
-    }
-
-    // COMBINE DATABASE + MONDAY API RESULTS
-    const result = {
-      fragrances: selectAll[0],
-      mondayApi: mondayApiResponse
-    };
-
-    // SEND COALESCED RESULTS
-    res.json(result);
-
+    res.send(selectAll[0]);
   } catch (error: any) {
     // ERROR HANDLING
     res.status(500).send(error);
     console.error(error);
   }
-}
+};
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     // FRAGRANCE DATA PAYLOAD
-    const { name, description, category, created_at, updated_at, image_url } = req.body;
+    const {
+      name,
+      description,
+      category,
+      created_at,
+      updated_at,
+      image_url
+    } = req.body;
 
     // ADD FRAGRANCE TO DATABASE
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
@@ -68,15 +46,22 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     // ADD FRAGRANCE TO MONDAY.COM BOARD
     const mutation: string = `
       mutation {
-        create_item (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_name: "${name}", column_values: "${JSON.stringify({
-          description: { text: description },
-          category: { text: category },
-          image_url: { text: image_url },
-          created_at: { text: created_at },
-          updated_at: { text: updated_at }
-        }).replace(/"/g, '\\"')}")
+        create_item (
+          board_id: ${ process.env.BOARD_ID_FRAGRANCES }, 
+          item_name: "${ name }", 
+          column_values: "${ JSON.stringify({
+            name: { text: name },
+            description: { text: description },
+            category: { text: category },
+            image_url: { text: image_url },
+            created_at: { text: created_at },
+            updated_at: { text: updated_at }
+          }).replace(/"/g, '\\"') }"
+        ) {
+          id
+          name
+        }
       }`;
-
 
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
@@ -89,12 +74,12 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     res.status(500).send(error);
     console.error(error);
   }
-}
+};
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    // FRAGRANCE DATA PAYLOAD
-    const { id, name, description, category, updated_at, image_url } = req.body;
+    const { name, description, category, updated_at, image_url } = req.body;
+    const { id } = req.params;
 
     // UPDATE FRAGRANCE IN DATABASE
     const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
@@ -103,15 +88,21 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
     // UPDATE FRAGRANCE IN MONDAY.COM BOARD
     const mutation: string = `
-  mutation {
-    change_multiple_column_values (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "${JSON.stringify({
+      mutation {
+        change_multiple_column_values (
+          board_id: ${process.env.BOARD_ID_FRAGRANCES}, 
+          item_id: ${id}, 
+          column_values: "${JSON.stringify({
       description: { text: description },
       category: { text: category },
       image_url: { text: image_url },
       updated_at: { text: updated_at }
-    }).replace(/"/g, '\\"')}")
-  }`;
-
+    }).replace(/"/g, '\\"')}"
+        ) {
+          id
+          name
+        }
+      }`;
 
     if (apiToken) {
       const mondayResponse = await mondayApiToken.post('', { query: mutation });
@@ -120,16 +111,14 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
     res.json(response[0]);
   } catch (error: any) {
-    // ERROR HANDLING
     res.status(500).send(error);
     console.error(error);
   }
-}
+};
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    // FRAGRANCE DATA PAYLOAD
-    const { id } = req.body;
+    const { id } = req.params;
 
     // DELETE FRAGRANCE FROM DATABASE
     await sequelize.query('EXECUTE DeleteFragrance :id', {
@@ -139,7 +128,9 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
     // DELETE FRAGRANCE FROM MONDAY.COM BOARD
     const mutation: string = `
       mutation {
-        delete_item (item_id: ${id})
+        delete_item (item_id: ${id}) {
+          id
+        }
       }`;
 
     if (apiToken) {
@@ -149,183 +140,193 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
 
     res.json(`Fragrance ${id} deleted successfully`);
   } catch (error: any) {
-    // ERROR HANDLING
     res.status(500).send(error);
     console.error(error);
   }
-}
+};
 
-const getFragrancesFromMonday = async (): Promise<any[]> => {
-  const query = `
-    { boards (limit:1) {
-      name
-      id
-      description
-      items {
-        name
-        column_values {
-          title
-          id
-          type
-          text
-    } } } }`;
+export const fetchAllItemsFromMonday = async (boardId: string): Promise<any[]> => {
+  let items: any[] = [];
+  let cursor: string | null = null;
 
-  try {
-    const response = await mondayApiToken.post('', { query });
-    console.log('Monday API Response:', JSON.stringify(response.data, null, 2));
-
-    if (response.data.errors) {
-      response.data.errors.forEach((error: any) => {
-        if (error.extensions.code === 'undefinedField') {
-          console.error(`Field '${error.extensions.fieldName}' doesn't exist on type '${error.extensions.typeName}'`);
+  do {
+    const query = `
+      query ($boardId: Int!, $cursor: String) {
+        boards (ids: [$boardId]) {
+          items_page (cursor: $cursor, limit: 100) {
+            cursor
+            items {
+              id
+              name
+              column_values {
+                column {
+                  title
+                }
+                text
+              }
+            }
+          }
         }
-      });
-      return [];
-    }
+      }
+    `;
 
-    if (response.data && response.data.data && response.data.data.boards && response.data.data.boards[0]) {
-      return response.data.data.boards[0].items_page.items || [];
-    } else {
-      console.error('Unexpected response format:', response.data);
-      return [];
-    }
-  } catch (error) {
-    console.error('Error fetching fragrances from Monday.com:', error);
-    return [];
-  }
+    const variables: any = { boardId: parseInt(boardId, 10), cursor };
+
+    const response: any = await mondayApiToken.post('', { query, variables });
+    const data: any = response.data.data.boards[0].items_page;
+    items = items.concat(data.items);
+    cursor = data.cursor;
+  } while (cursor);
+
+  return items;
 };
 
 export const syncFragrances = async (): Promise<void> => {
   try {
-    // FETCH ALL FRAGRANCES FROM DATABASE
-    const fragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
+    // Fetch all fragrances from the database
+    const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
+    const dbFragranceMap: any = new Map(dbFragrances[0].map((item: any) => [item.name, item]));
 
-    // FETCH ALL EXISTING ITEMS FROM MONDAY.COM BOARD
-    const existingItems: any[] = await getFragrancesFromMonday();
+    // Fetch all items from monday.com board
+    const boardId = process.env.BOARD_ID_FRAGRANCES!;
+    const mondayItems = await fetchAllItemsFromMonday(boardId);
+    const mondayItemMap = new Map(mondayItems.map((item: any) => [item.name, item]));
 
-    // VERIFY existingItems IS AN ARRAY
-    if (!Array.isArray(existingItems)) {
-      console.error('existingItems is not an array:', existingItems);
-      return;
-    }
+    // Identify items to add, update, and delete
+    const itemsToAdd = [];
+    const itemsToUpdate = [];
+    const itemsToDelete = [];
 
-    // CREATE MAP OF EXISTING ITEMS BY NAME
-    const existingItemsMap = new Map<string, any>();
-    existingItems.forEach((item: any): void => {
-      existingItemsMap.set(item.name, item);
-    });
+    // Determine items to add and update
+    for (const [name, dbFragrance] of dbFragranceMap.entries()) {
+      const mondayItem = mondayItemMap.get(name);
+      if (mondayItem) {
+        // Check if the item needs to be updated
+        const columns = mondayItem.column_values.reduce((acc: any, cv: any) => {
+          acc[cv.column.title.toLowerCase().replace(/ /g, "_")] = cv.text;
+          return acc;
+        }, {});
 
-    console.log({ existingItems });
+        const needsUpdate = ['description', 'category', 'image_url', 'created_at', 'updated_at'].some(field => columns[field] !== dbFragrance[field]);
 
-    // COUNTER FOR RATE LIMITING
-    let processedItems = 0;
-    const maxItems = 2;
-
-    // START LOOP FROM THE SECOND ITEM (INDEX 1)
-    for (let i = 1; i < fragrances[0].length; i++) {
-      if (processedItems >= maxItems) {
-        break;
-      }
-
-      const fragrance = fragrances[0][i];
-      const existingItem = existingItemsMap.get(fragrance.name);
-
-      if (existingItem) {
-        // UPDATE EXISTING ITEM
-        const mutation: string = `
-          mutation {
-            change_multiple_column_values (
-              board_id: ${process.env.BOARD_ID_FRAGRANCES},
-              item_id: ${existingItem.id},
-              column_values: "${JSON.stringify({
-          description: fragrance.description,
-          category: fragrance.category,
-          image_url: fragrance.image_url,
-          created_at: fragrance.created_at,
-          updated_at: fragrance.updated_at
-        }).replace(/"/g, '\\"')}"
-            ) {
-              id
-              name
-            }
-          }`;
-
-        try {
-          const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-          console.log("Monday API Update Response: ", mondayResponse.data);
-        } catch (error) {
-          console.error('Error updating item in Monday.com:', error);
+        if (needsUpdate) {
+          itemsToUpdate.push({ id: mondayItem.id, ...dbFragrance });
         }
       } else {
-        // CREATE A NEW ITEM
-        const mutation: string = `
-          mutation {
-            create_item (
-              board_id: ${process.env.BOARD_ID_FRAGRANCES},
-              item_name: "${fragrance.name}",
-              column_values: "${JSON.stringify({
-          description: fragrance.description,
-          category: fragrance.category,
-          image_url: fragrance.image_url,
-          created_at: fragrance.created_at,
-          updated_at: fragrance.updated_at
-        }).replace(/"/g, '\\"')}"
-            ) {
-              id
-              name
-            }
-          }`;
-
-        try {
-          const mondayResponse = await mondayApiToken.post('', { query: mutation });
-          console.log("Monday API Create Response: ", mondayResponse.data);
-        } catch (error) {
-          console.error('Error creating item in Monday.com:', error);
-        }
+        // Item to add
+        itemsToAdd.push(dbFragrance);
       }
-
-      processedItems++;
     }
-  } catch (error) {
-    console.error('Error syncing fragrances:', error);
-  }
-};
 
+    // Determine items to delete
+    for (const [name, mondayItem] of mondayItemMap.entries()) {
+      if (!dbFragranceMap.has(name)) {
+        itemsToDelete.push(mondayItem.id);
+      }
+    }
 
-const syncOrders = async (): Promise<void> => {
-  try {
-    const orders: any = await sequelize.query('EXECUTE GetAllOrders');
-
-    for (const order of orders[0]) {
-      const mutation: string = `
+    // Perform add, update, delete operations
+    const addPromises = itemsToAdd.map(item => {
+      const mutation = `
         mutation {
-          create_item (board_id: ${process.env.BOARD_ID_ORDERS}, item_name: "Order ${order.id}", column_values: "${JSON.stringify({
-        created_at: {text: order.created_at},
-        number_of_kits: {text: order.number_of_kits},
-        fragrance1_id: {text: order.fragrance1_id},
-        fragrance2_id: {text: order.fragrance2_id},
-        fragrance3_id: {text: order.fragrance3_id}
+          create_item (board_id: ${boardId}, item_name: "${item.name}", column_values: "${JSON.stringify({
+        description: { text: item.description },
+        category: { text: item.category },
+        image_url: { text: item.image_url },
+        created_at: { text: item.created_at },
+        updated_at: { text: item.updated_at }
       }).replace(/"/g, '\\"')}")
+          {
+            id
+            name
+          }
         }`;
+      return mondayApiToken.post('', { query: mutation });
+    });
 
-      const mondayResponse = await mondayApiToken.post('/', { query: mutation });
-      console.log("Monday API Response: ", mondayResponse.data);
-    }
-  } catch (error) {
-    console.error('Error syncing orders:', error);
+    const updatePromises = itemsToUpdate.map(item => {
+      const mutation = `
+        mutation {
+          change_multiple_column_values (board_id: ${boardId}, item_id: ${item.id}, column_values: "${JSON.stringify({
+        description: { text: item.description },
+        category: { text: item.category },
+        image_url: { text: item.image_url },
+        updated_at: { text: item.updated_at }
+      }).replace(/"/g, '\\"')}")
+          {
+            id
+            name
+          }
+        }`;
+      return mondayApiToken.post('', { query: mutation });
+    });
+
+    const deletePromises = itemsToDelete.map(itemId => {
+      const mutation = `
+        mutation {
+          delete_item (item_id: ${itemId}) {
+            id
+          }
+        }`;
+      return mondayApiToken.post('', { query: mutation });
+    });
+
+    await Promise.all([...addPromises, ...updatePromises, ...deletePromises]);
+  } catch (error: any) {
+    console.error('Error syncing data:', error);
   }
 };
 
-const syncData = async (): Promise<void> => {
-  await syncFragrances();
-  // await syncOrders();
+// Function to add fragrance to monday.com
+export const addFragranceToMonday = async (name: string, description: string, category: string, image_url: string, created_at: string, updated_at: string) => {
+  const mutation = `
+    mutation {
+      create_item (
+        board_id: ${process.env.BOARD_ID_FRAGRANCES}, 
+        item_name: "${name}", 
+        column_values: "${JSON.stringify({
+    description: { text: description },
+    category: { text: category },
+    image_url: { text: image_url },
+    created_at: { text: created_at },
+    updated_at: { text: updated_at }
+  }).replace(/"/g, '\\"')}"
+      ) {
+        id
+        name
+      }
+    }`;
+  return mondayApiToken.post('', { query: mutation });
 };
 
-// DISABLED: AUTOMATICALLY SYNC WITH DATABASE
-// syncData().then((): void => {
-//   console.log('Data synced successfully');
-// }).catch(error => {
-//   console.error('Error during data sync:', error);
-// });
+// Function to update fragrance in monday.com
+export const updateFragranceInMonday = async (id: number, description: string, category: string, image_url: string, updated_at: string) => {
+  const mutation = `
+    mutation {
+      change_multiple_column_values (
+        board_id: ${process.env.BOARD_ID_FRAGRANCES}, 
+        item_id: ${id}, 
+        column_values: "${JSON.stringify({
+    description: { text: description },
+    category: { text: category },
+    image_url: { text: image_url },
+    updated_at: { text: updated_at }
+  }).replace(/"/g, '\\"')}"
+      ) {
+        id
+        name
+      }
+    }`;
+  return mondayApiToken.post('', { query: mutation });
+};
 
-// TODO: BASED ON THE CURRENT IMPLEMENTATION OF THE MONDAY.COM API INTEGRATION, WE CAN QUERY FRAGRANCE DATA FROM BOTH THE DATABASE AND API. WE ATTEMPT TO MAP THE DATA AND CHECK FOR VALID ENTRIES IN THE EXISTING BOARD; CRUD IS PERFORMED ACCORDINGLY. CURRENTLY I'M HAVING DIFFICULTY SYNCHRONIZING THE TABLE WITH THE DATABASE. THE NAMES OF THE FRAGRANCES APPEAR BUT THAT'S IT. VIEW THE CONSOLE FOR A BETTER UNDERSTANDING OF THE ERROR. IT COULD HAVE TO DO WITH A POTENTIAL MISMATCH BETWEEN THE BOARD COLUMNS AND THE DATABASE COLUMNS (THERE'S A NAME COLUMN IN BOTH TABLES, BUT ALSO A FRAGRANCE COLUMN IN THE MONDAY BOARD THAT SHOWS THE NAME --- POSSIBLE MISMATCH? OVERLOAD?). AUTO-SYNC IS DISABLED TO LIMIT API CALLS. *** READ THE MONDAY.COM API DOCUMENTATION TO TROUBLESHOOT. AT ONE POINT, YOU WERE ABLE TO MAKE CLEAN GRAPHQL QUERIES AGAINST THE API (SEE mondayApiResponse VARIABLE) ***
+// Function to delete fragrance from monday.com
+export const deleteFragranceFromMonday = async (id: number) => {
+  const mutation = `
+    mutation {
+      delete_item (item_id: ${id}) {
+        id
+      }
+    }`;
+  return mondayApiToken.post('', { query: mutation });
+};
