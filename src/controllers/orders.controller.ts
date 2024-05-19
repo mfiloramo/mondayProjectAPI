@@ -50,7 +50,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     const orderId = response[0][0].NewOrderID;
 
-    // ADD FRAGRANCE TO MONDAY.COM BOARD
     const mutation: string = `
       mutation {
         create_item (
@@ -64,7 +63,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             fragrance2_id: { text: fragrance2_id },
             fragrance3_id: { text: fragrance3_id },
             status: { text: 'pending' }
-    }).replace(/"/g, '\\"') }"
+          }).replace(/"/g, '\\"') }"
         ) {
           id
           name
