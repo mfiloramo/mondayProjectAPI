@@ -1,23 +1,24 @@
-import { Request, Response } from "express";
-import { sequelize } from "../config/sequelize";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { Request, Response } from 'express';
+import { sequelize } from '../config/sequelize';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import mondaySdk from 'monday-sdk-js';
 
+const monday = mondaySdk();
 const apiToken: string | undefined = process.env.MONDAY_API_TOKEN;
+
 const mondayApiToken: AxiosInstance = axios.create({
   baseURL: 'https://api.monday.com/v2',
   headers: {
     Authorization: apiToken,
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 export const getAllOrders = async (req: Request, res: Response): Promise<void> => {
   try {
-    // SELECT ALL ORDERS IN DATABASE
     const selectAll = await sequelize.query('EXECUTE GetAllOrders');
     res.send(selectAll[0]);
   } catch (error: any) {
-    // ERROR HANDLING
     res.status(500).send(error);
     console.error(error);
   }
@@ -31,10 +32,12 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       number_of_kits,
       fragrance1_id,
       fragrance2_id,
-      fragrance3_id
+      fragrance3_id,
+      status,
+      created_at,
+      updated_at
     } = req.body;
 
-    // QUERY DATABASE USING ORM
     const response: any = await sequelize.query(
       'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id',
       {
@@ -49,28 +52,29 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       }
     );
 
-    // GET NEW ORDER ID FOR ITEM
     const orderId = response[0][0].NewOrderID;
 
-    // SEND CHANGES TO MONDAY.COM BOARD
     const mutation: string = `
       mutation {
         create_item (
-          board_id: ${ process.env.BOARD_ID_ORDERS },
-          item_name: "Order ${ orderId }",
-          column_values: "${ JSON.stringify({
-            first_name: { text: first_name },
-            last_name: { text: last_name },
-            number_of_kits: { text: number_of_kits },
-            fragrance1_id: { text: fragrance1_id },
-            fragrance2_id: { text: fragrance2_id },
-            fragrance3_id: { text: fragrance3_id },
-            status: { text: 'pending' }
-          }).replace(/"/g, '\\"') }"
+          board_id: ${process.env.BOARD_ID_ORDERS},
+          item_name: "Order ${orderId}",
+          column_values: "${JSON.stringify({
+            first_name__1: first_name,
+            text__1: last_name,
+            status7__1: status,
+            quantity__1: number_of_kits,
+            fragrance_1_id1__1: fragrance1_id,
+            numbers__1: fragrance2_id,
+            fragrance_3_id__1: fragrance3_id,
+            text34__1: created_at,
+            text4__1: updated_at
+          }).replace(/"/g, '\\"')}"
         ) {
           id
           name
-        }      }`;
+        }
+      }`;
 
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
@@ -86,115 +90,97 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    // ORDER DATA PAYLOAD
     const { id, status } = req.body;
 
-    // UPDATE ORDER IN DATABASE
     await sequelize.query('EXECUTE UpdateOrderStatus :id, :status', {
       replacements: { id, status }
     });
 
-    // SEND 200 RESPONSE TO USER
     res.status(200).send('Order status updated successfully');
   } catch (error: any) {
-    // ERROR HANDLING
     res.status(500).send(error);
     console.error(error);
   }
 };
 
-export const fetchAllOrdersFromMonday = async (boardId: string): Promise<any> => {
-  let items: any[] = [];
-  let cursor: string | null = null;
-
+export const fetchAllOrdersFromMonday = async (): Promise<any> => {
   const query = `
-      query ($boardId: [ID!]!) {
-        boards (ids: $boardId) {
-          items_page (limit: 100) {
-            items {
-              id
-              name
-              column_values {
-                text
-              }
+    query ($boardId: [ID!]!) {
+      boards (ids: $boardId) {
+        items_page (limit: 100) {
+          items {
+            id
+            name
+            column_values {
+              text
             }
           }
         }
       }
-    `;
+    }
+  `;
+
+  const variables = { boardId: process.env.BOARD_ID_ORDERS };
 
   try {
-    const response: any = await mondayApiToken.post('', { query, mondayApiToken });
-
+    const response: any = await mondayApiToken.post('', { query, variables });
     if (response.data.errors) {
-      throw new Error(`Error fetching items: ${ response.data.errors[0].message }`);
+      throw new Error(`Error fetching items: ${response.data.errors[0].message}`);
     }
-
-
-    const data: any = response.data.data.boards[0].items_page;
-    if (data) {
-      items = items.concat(data.items);
-      cursor = data.cursor;
-    } else {
-      return;
-    }
+    return response.data.data.boards[0].items_page.items;
   } catch (error) {
     console.error('Error fetching items from Monday.com:', error);
     throw error;
   }
-}
+};
 
-// TODO: THIS BECOMES A CRON JOB
 export const syncOrders = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Fetch all items from Monday.com board
     const boardId = process.env.BOARD_ID_ORDERS!;
-    const existingItems = await fetchAllOrdersFromMonday(boardId);
+    const existingItems = await fetchAllOrdersFromMonday();
 
-    console.log(existingItems)
-    // Delete all existing items from the board
     const deletePromises = existingItems.map((item: any) => {
-      const deleteMutation = `
+      const deleteMutation: string = `
         mutation {
-          delete_item(item_id: ${ item.id }) {
+          delete_item(item_id: ${item.id}) {
             id
           }
         }
       `;
+      throttle(200);
       return mondayApiToken.post('', { query: deleteMutation });
     });
 
     await Promise.all(deletePromises);
 
-    // Fetch all orders from the database
     const dbOrders: any = await sequelize.query('EXECUTE GetAllOrders');
+    const items = dbOrders[0];
 
-    // Iterate over the fetched orders and add them to Monday.com board
-    const addPromises = dbOrders[0].map((item: any) => {
+    for (const item of items) {
       const mutation: string = `
         mutation {
           create_item (
-            board_id: ${ boardId },
-            item_name: "Order ${ item.order_id }",
-            column_values: "${ JSON.stringify({
-              first_name: { text: item.first_name },
-              last_name: { text: item.last_name },
-              number_of_kits: { text: item.number_of_kits },
-              fragrance1_id: { text: item.fragrance1_id },
-              fragrance2_id: { text: item.fragrance2_id },
-              fragrance3_id: { text: item.fragrance3_id },
-              status: { text: item.status }
-            }).replace(/"/g, '\\"') }"
+            board_id: ${boardId},
+            item_name: "Order ${item.id}",
+            column_values: "${JSON.stringify({
+              first_name__1: item.first_name,
+              text__1: item.last_name,
+              status7__1: item.status,
+              quantity__1: item.number_of_kits,
+              fragrance_1_id1__1: item.fragrance1_id,
+              numbers__1: item.fragrance2_id,
+              fragrance_3_id__1: item.fragrance3_id,
+              text34__1: item.created_at,
+              text4__1: item.updated_at
+      }).replace(/"/g, '\\"')}"
           ) {
             id
-            name
           }
         }`;
-
-      return mondayApiToken.post('', { query: mutation });
-    });
-
-    await Promise.all(addPromises);
+      const response = await mondayApiToken.post('', { query: mutation });
+      console.log("Create Item Response: ", response.data);
+      await throttle(300);
+    }
 
     res.status(200).send('Orders synchronized successfully');
   } catch (error: any) {
@@ -203,3 +189,4 @@ export const syncOrders = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
+const throttle = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
