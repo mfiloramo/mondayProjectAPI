@@ -4,7 +4,7 @@ import {
   addFragrance,
   updateFragrance,
   deleteFragrance,
-  syncFragrances
+  syncFragrances, fetchAllFragrancesFromMonday
 } from "../controllers/fragrances.controller";
 
 
@@ -12,6 +12,7 @@ const router: Router = express.Router();
 
 router.get('/', selectAllFragrances);
 router.get('/sync', syncFragrances);
+router.get('/monday', fetchAllFragrancesFromMonday);
 router.post('/', addFragrance);
 router.put('/:id', updateFragrance);
 router.delete('/:id', deleteFragrance);

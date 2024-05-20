@@ -151,6 +151,7 @@ export const syncOrders = async (req: Request, res: Response): Promise<void> => 
     const boardId = process.env.BOARD_ID_ORDERS!;
     const existingItems = await fetchAllOrdersFromMonday(boardId);
 
+    console.log(existingItems)
     // Delete all existing items from the board
     const deletePromises = existingItems.map((item: any) => {
       const deleteMutation = `
