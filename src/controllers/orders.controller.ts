@@ -93,7 +93,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     let { id, status, value } = req.body;
 
     id = 1
-    status = req.body.event.value;
+    status = req.body.event.value.label.text;
 
     console.log(value);
 
