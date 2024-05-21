@@ -10,9 +10,9 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
     }
 
     const { event, itemId, values } = req.body;
-    const parentPath = req.baseUrl.split('/').pop();
+    const parentPath: string | undefined = req.baseUrl.split('/').pop();
 
-    let handled = false;
+    let handled: boolean = false;
 
     if (parentPath === 'fragrances') {
       switch (event) {
@@ -43,7 +43,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
           handled = true;
           break;
         case 'item_deleted':
-          // Handle order deletion if applicable
+          // TODO: HANDLE ORDER DELETION IF APPLICABLE
           handled = true;
           break;
         default:
