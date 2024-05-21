@@ -18,6 +18,6 @@ router.put('/:id', updateFragrance);
 router.delete('/:id', deleteFragrance);
 
 // WEBHOOK
-router.all('/webhook', handleWebhook);
+router.post('/webhook', handleWebhook);
 
 export const fragrancesRouter: Router = router;

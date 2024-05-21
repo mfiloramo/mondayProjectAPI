@@ -16,6 +16,6 @@ router.put('/status', updateOrderStatus);
 router.get('/sync', syncOrders);
 
 // WEBHOOK
-router.all('/webhook', handleWebhook);
+router.post('/webhook', handleWebhook);
 
 export const ordersRouter: Router = router;
