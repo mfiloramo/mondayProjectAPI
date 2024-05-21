@@ -92,9 +92,11 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
   try {
     let { id, status, value } = req.body;
 
-    if (req.body.value.text) {
-      status = req.body.value.text;
-    }
+    // if (req.body.value.text) {
+    //   status = req.body.value.text;
+    // }
+
+    console.log(req.body.value);
 
     id = 1
     status = 'Delivered';
