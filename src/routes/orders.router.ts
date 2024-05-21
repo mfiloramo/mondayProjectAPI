@@ -5,14 +5,17 @@ import {
   updateOrderStatus,
   syncOrders
 } from '../controllers/orders.controller';
-import { handleWebhook } from '../middleware/webhooks';
+import { handleWebhook } from '../middleware/webhook';
 
 const router: Router = express.Router();
 
+// API ROUTES
 router.get('/', getAllOrders);
 router.post('/', createOrder);
 router.put('/status', updateOrderStatus);
 router.get('/sync', syncOrders);
-router.post('/webhook', handleWebhook);
+
+// WEBHOOK
+router.all('/webhook', handleWebhook);
 
 export const ordersRouter: Router = router;

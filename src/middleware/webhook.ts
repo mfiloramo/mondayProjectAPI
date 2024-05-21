@@ -14,6 +14,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
 
     let handled: boolean = false;
 
+    // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     if (parentPath === 'fragrances') {
       switch (event) {
         case 'item_created':
@@ -32,6 +33,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
           res.status(400).send('Unknown event');
           return;
       }
+    // ROUTE WEBHOOK TO ORDERS CONTROLLER
     } else if (parentPath === 'orders') {
       switch (event) {
         case 'item_created':

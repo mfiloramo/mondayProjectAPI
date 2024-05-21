@@ -6,15 +6,18 @@ import {
   deleteFragrance,
   syncFragrances
 } from '../controllers/fragrances.controller';
-import { handleWebhook } from '../middleware/webhooks';
+import { handleWebhook } from '../middleware/webhook';
 
 const router: Router = express.Router();
 
+// API ROUTES
 router.get('/', selectAllFragrances);
 router.get('/sync', syncFragrances);
 router.post('/', addFragrance);
 router.put('/:id', updateFragrance);
 router.delete('/:id', deleteFragrance);
-router.post('/webhook', handleWebhook);
+
+// WEBHOOK
+router.all('/webhook', handleWebhook);
 
 export const fragrancesRouter: Router = router;
