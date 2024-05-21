@@ -97,6 +97,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     }
 
     id = 1
+    status = 'Delivered';
 
     console.log(value);
 
