@@ -11,8 +11,10 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
     }
 
     const { event, itemId, values } = req.body;
+    // TODO: CHANGE PARENTPATH TO event.type
     const parentPath: string | undefined = req.baseUrl.split('/').pop();
 
+    //  VALUE TO KEEP TRACK OF
     let handled: boolean = false;
 
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
@@ -34,20 +36,21 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
           res.status(400).send('Unknown event');
           return;
       }
+
     // ROUTE WEBHOOK TO ORDERS CONTROLLER
     } else if (parentPath === 'orders') {
       switch (event) {
         case 'item_created':
           await createOrder(req, res);
-          handled = true;
+          // handled = true;
           break;
         case 'item_updated':
           await updateOrderStatus(req, res);
-          handled = true;
+          // handled = true;
           break;
         case 'item_deleted':
           // TODO: HANDLE ORDER DELETION IF APPLICABLE
-          handled = true;
+          // handled = true;
           break;
         default:
           res.status(400).send('Unknown event');
@@ -58,9 +61,9 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
       return;
     }
 
-    if (!handled) {
-      next();
-    }
+    // if (!handled) {
+    //   next();
+    // }
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
