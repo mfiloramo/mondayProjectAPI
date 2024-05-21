@@ -4,6 +4,7 @@ import { createOrder, updateOrderStatus } from '../controllers/orders.controller
 
 export const handleWebhook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    console.log(req.body);
     if (req.body.challenge) {
       res.send({ challenge: req.body.challenge });
       return;
