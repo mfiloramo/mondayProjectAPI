@@ -3,7 +3,7 @@ import {
   getAllOrders,
   createOrder,
   updateOrderStatus,
-  syncOrders
+  syncOrders, fetchAllOrdersFromMonday
 } from '../controllers/orders.controller';
 import { handleWebhook } from '../middleware/webhook';
 
@@ -11,6 +11,7 @@ const router: Router = express.Router();
 
 // API ROUTES
 router.get('/', getAllOrders);
+router.get('/monday', fetchAllOrdersFromMonday);
 router.post('/', createOrder);
 router.put('/status', updateOrderStatus);
 router.get('/sync', syncOrders);

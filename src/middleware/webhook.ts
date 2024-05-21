@@ -5,6 +5,8 @@ import { createOrder, updateOrderStatus } from '../controllers/orders.controller
 export const handleWebhook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log(req.body);
+
+    // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
       res.send({ challenge: req.body.challenge });
       return;
@@ -14,23 +16,17 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
     // TODO: CHANGE PARENTPATH TO event.type
     const parentPath: string | undefined = req.baseUrl.split('/').pop();
 
-    //  VALUE TO KEEP TRACK OF
-    let handled: boolean = false;
-
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     if (parentPath === 'fragrances') {
       switch (event) {
         case 'item_created':
           await addFragrance(req, res);
-          handled = true;
           break;
         case 'item_updated':
           await updateFragrance(req, res);
-          handled = true;
           break;
         case 'item_deleted':
           await deleteFragrance(req, res);
-          handled = true;
           break;
         default:
           res.status(400).send('Unknown event');
@@ -42,15 +38,13 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
       switch (event) {
         case 'item_created':
           await createOrder(req, res);
-          // handled = true;
           break;
         case 'item_updated':
           await updateOrderStatus(req, res);
-          // handled = true;
           break;
         case 'item_deleted':
           // TODO: HANDLE ORDER DELETION IF APPLICABLE
-          // handled = true;
+          // ...
           break;
         default:
           res.status(400).send('Unknown event');
@@ -61,9 +55,6 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
       return;
     }
 
-    // if (!handled) {
-    //   next();
-    // }
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
