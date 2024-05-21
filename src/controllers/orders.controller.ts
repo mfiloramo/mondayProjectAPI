@@ -90,7 +90,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log(req.body.value);
+    console.log(req.body);
 
     const { id, status, value } = req.body;
     console.log(value);
