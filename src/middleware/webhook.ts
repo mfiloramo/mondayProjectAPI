@@ -16,11 +16,9 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
     // TODO: CHANGE PARENTPATH TO event.type
     const parentPath: string | undefined = req.baseUrl.split('/').pop();
 
-    console.log(parentPath);
-
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     if (parentPath === 'fragrances') {
-      switch (event) {
+      switch (event.type) {
         case 'item_created':
           await addFragrance(req, res);
           break;
@@ -37,11 +35,11 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
 
     // ROUTE WEBHOOK TO ORDERS CONTROLLER
     } else if (parentPath === 'orders') {
-      switch (event) {
+      switch (event.type) {
         case 'item_created':
           await createOrder(req, res);
           break;
-        case 'item_updated':
+        case 'update_column_value':
           await updateOrderStatus(req, res);
           break;
         case 'item_deleted':
