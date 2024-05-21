@@ -11,7 +11,6 @@ const router: Router = express.Router();
 
 // API ROUTES
 router.get('/', getAllOrders);
-router.get('/monday', fetchAllOrdersFromMonday);
 router.post('/', createOrder);
 router.put('/status', updateOrderStatus);
 router.get('/sync', syncOrders);
