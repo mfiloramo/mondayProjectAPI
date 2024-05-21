@@ -4,7 +4,7 @@ import { createOrder, updateOrderStatus } from '../controllers/orders.controller
 
 export const handleWebhook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
 
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
@@ -15,6 +15,8 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
     const { event, itemId, values } = req.body;
     // TODO: CHANGE PARENTPATH TO event.type
     const parentPath: string | undefined = req.baseUrl.split('/').pop();
+
+    console.log(parentPath);
 
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     if (parentPath === 'fragrances') {
