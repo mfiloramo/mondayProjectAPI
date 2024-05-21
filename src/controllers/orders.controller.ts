@@ -92,14 +92,8 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
   try {
     let { id, status, value } = req.body;
 
-    // if (req.body.value.text) {
-    //   status = req.body.value.text;
-    // }
-
-    console.log(req.body);
-
     id = 1
-    status = 'Delivered';
+    status = req.body.event.value;
 
     console.log(value);
 
