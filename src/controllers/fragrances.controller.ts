@@ -86,7 +86,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         description = value.value.label.text;
         break;
       case 'Category':
-        category = req.body.event.columnTitle.toLowerCase();
+        category = value.value;
         break;
       case 'Image URL':
         image_url = value.value.label.text;
