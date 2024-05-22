@@ -35,6 +35,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
 
     // ROUTE WEBHOOK TO ORDERS CONTROLLER
     } else if (parentPath === 'orders') {
+      console.log(event);
       switch (event.type) {
         case 'item_created':
           await createOrder(req, res);
