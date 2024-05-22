@@ -1,7 +1,7 @@
 // MODULE IMPORTS
 import express, { Express, Request, Response } from 'express';
 import http from 'http';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 
 // ROUTER IMPORTS
 import { fragrancesRouter } from './routes/fragrances.router';
@@ -11,13 +11,6 @@ import { ordersRouter } from './routes/orders.router';
 const app: Express = express();
 const PORT: string | number = process.env.PORT || 3057;
 const server = http.createServer(app);
-
-// Middleware to log the request body and path
-const logRequestBodyAndPath = (req: Request, res: Response, next: any) => {
-  console.log(`Path: ${req.path}`);
-  console.log(`Body:`, req.body);
-  next();
-};
 
 // DISABLED FOR DEMO: CORS MIDDLEWARE
 // const corsOptions: CorsOptions = {
@@ -30,7 +23,6 @@ const logRequestBodyAndPath = (req: Request, res: Response, next: any) => {
 
 app.use(express.json());
 app.use(cors());
-app.use(logRequestBodyAndPath); // Add the logging middleware
 
 // SERVER ROUTES
 app
