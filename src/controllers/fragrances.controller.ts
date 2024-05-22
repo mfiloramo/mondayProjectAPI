@@ -83,13 +83,13 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         name = value.value;
         break;
       case 'Description':
-        description = value.value.label.text;
+        description = value.value;
         break;
       case 'Category':
         category = value.value;
         break;
       case 'Image URL':
-        image_url = value.value.label.text;
+        image_url = value.value;
         break;
       default:
         res.status(400).send('Unknown column ID');
