@@ -106,13 +106,12 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     console.error(error);
   }
 };
+
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log('deleteFragrance pinged...');
-
     const id: number = parseInt(req.body.event.itemName);
 
-    await sequelize.query('EXECUTE DeleteFragrance :itemName', {
+    await sequelize.query('EXECUTE DeleteFragrance :id', {
       replacements: { id },
     });
 
