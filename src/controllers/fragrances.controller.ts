@@ -75,6 +75,9 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     let category: string | null = null;
     let image_url: string | null = null;
 
+    console.log(req.body.event.value);
+    console.log(req.body.event.value.label);
+
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
       case 'Name':
@@ -84,8 +87,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         description = value.value;
         break;
       case 'Category':
-        category = req.body.event.columnTitle;
-        console.log({ category });
+        category = req.body.event.columnTitle.toLowerCase();
         break;
       case 'Image URL':
         image_url = value.value;
