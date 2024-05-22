@@ -66,6 +66,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 };
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
+  console.log('tomato', req.body.event.value.label);
   try {
     const { pulseId, columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
@@ -74,6 +75,11 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     let description: string | null = null;
     let category: string | null = null;
     let image_url: string | null = null;
+
+    console.log({ name });
+    console.log({ description });
+    console.log({ category });
+    console.log({ image_url });
 
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
