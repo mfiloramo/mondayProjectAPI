@@ -105,8 +105,6 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
-
     await sequelize.query('EXECUTE DeleteFragrance :id', {
       replacements: { id },
     });
@@ -221,4 +219,5 @@ export const fetchAllFragrancesFromMonday = async (): Promise<any> => {
   }
 };
 
+/** UTILITY FUNCTIONS */
 const throttle = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
