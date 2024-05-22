@@ -67,34 +67,36 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id, name, description, category, updated_at, image_url } = req.body;
-    console.log(req.body.event.value);
+    const { pulseId, columnTitle, value } = req.body.event;
+    const updated_at: string = new Date().toISOString();
 
-    const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
-      replacements: { id, name, description, category, updated_at, image_url },
-    });
+    let name: string | null = null;
+    let description: string | null = null;
+    let category: string | null = null;
+    let image_url: string | null = null;
 
-    const mutation: string = `
-      mutation {
-        change_multiple_column_values(
-          board_id: ${ process.env.BOARD_ID_FRAGRANCES },
-          item_id: ${ id },
-          column_values: "${ JSON.stringify({
-            description: { text: description },
-            category: { text: category },
-            image_url: { text: image_url },
-            updated_at: { text: updated_at },
-        }).replace(/"/g, '\\"')}"
-        ) {
-          id
-          name
-        }
-      }`;
-
-    if (apiToken) {
-      const mondayResponse = await mondayApiToken.post('', { query: mutation });
-      console.log('Monday API Response: ', mondayResponse.data);
+    // UPDATE IDENTIFIED COLUMN
+    switch (columnTitle) {
+      case 'Name':
+        name = value;
+        break;
+      case 'Description':
+        description = value;
+        break;
+      case 'Category':
+        category = value;
+        break;
+      case 'Image URL':
+        image_url = value;
+        break;
+      default:
+        res.status(400).send('Unknown column ID');
     }
+
+    // Execute the stored procedure with the updated values
+    const response = await sequelize.query('EXECUTE UpdateFragrance :name, :description, :category, :updated_at, :image_url', {
+      replacements: { name, description, category, updated_at, image_url },
+    });
 
     res.json(response[0]);
   } catch (error: any) {
@@ -102,7 +104,6 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     console.error(error);
   }
 };
-
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;

@@ -5,7 +5,7 @@ import {
   updateOrderStatus,
   syncOrders, fetchAllOrdersFromMonday
 } from '../controllers/orders.controller';
-import { handleWebhook } from '../middleware/webhook';
+import { handleOrdersWebhook } from "../middleware/ordersWebhook";
 
 const router: Router = express.Router();
 
@@ -17,6 +17,6 @@ router.put('/status', updateOrderStatus);
 router.get('/sync', syncOrders);
 
 // WEBHOOK
-router.post('/webhook', handleWebhook);
+router.post('/webhook', handleOrdersWebhook);
 
 export const ordersRouter: Router = router;
