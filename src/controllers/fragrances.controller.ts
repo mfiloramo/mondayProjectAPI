@@ -66,9 +66,8 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 };
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
-  console.log('tomato', req.body.event.value.label);
   try {
-    const { pulseId, columnTitle, value } = req.body.event;
+    const { columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
 
     let name: string | null = null;
@@ -159,11 +158,12 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
     const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
 
     for (const item of dbFragrances[0]) {
+      console.log(item);
       const mutation: string = `
         mutation {
           create_item(
             board_id: ${boardId},
-            item_name: "${item.name}",
+            item_name: "${item.id}",
             column_values: "${JSON.stringify({
               text8__1: item.name,
               description__1: item.description,
