@@ -68,12 +68,11 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id, name, description, category, updated_at, image_url } = req.body;
+    console.log(req.body);
 
     const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
       replacements: { id, name, description, category, updated_at, image_url },
     });
-
-    // TAKE THE INPUT, SEE THE COLUMN NAME TO DETERMINE WHAT IT IS, THEN
 
     const mutation: string = `
       mutation {
@@ -81,10 +80,10 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
           board_id: ${ process.env.BOARD_ID_FRAGRANCES },
           item_id: ${ id },
           column_values: "${ JSON.stringify({
-          description: { text: description },
-          category: { text: category },
-          image_url: { text: image_url },
-          updated_at: { text: updated_at },
+            description: { text: description },
+            category: { text: category },
+            image_url: { text: image_url },
+            updated_at: { text: updated_at },
         }).replace(/"/g, '\\"')}"
         ) {
           id
