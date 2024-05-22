@@ -40,29 +40,24 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     if (!category) category = null;
     if (!image_url) image_url = null;
 
-    console.log({ description });
-    console.log({ category });
-    console.log({ image_url });
-
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
       replacements: { name, description, category, created_at, updated_at, image_url },
     });
-
 
     // DEPRECATED
     // const mutation: string = `
     //   mutation {
     //     create_item(
     //       board_id: ${process.env.BOARD_ID_FRAGRANCES},
-    //       item_name: "${name}",
+    //       item_name: "${ name }",
     //       column_values: "${JSON.stringify({
-    //   name: { text: name },
-    //   description: { text: description },
-    //   category: { text: category },
-    //   image_url: { text: image_url },
-    //   created_at: { text: created_at },
-    //   updated_at: { text: updated_at },
-    // }).replace(/"/g, '\\"')}"
+    //         name: { text: name },
+    //         description: { text: description },
+    //         category: { text: category },
+    //         image_url: { text: image_url },
+    //         created_at: { text: created_at },
+    //         updated_at: { text: updated_at },
+    //       }).replace(/"/g, '\\"')}"
     //     ) {
     //       id
     //       name
@@ -125,9 +120,8 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('deleteEvent:', req.body.event);
     const id: number = parseInt(req.body.event.itemName);
-    console.log('tomato', id);
-
     await sequelize.query('EXECUTE DeleteFragrance :id', {
       replacements: { id },
     });
@@ -180,6 +174,8 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
             name
           }
         }`;
+
+      console.log(mutation);
 
       await mondayApiToken.post('', { query: mutation });
       await throttle(300);

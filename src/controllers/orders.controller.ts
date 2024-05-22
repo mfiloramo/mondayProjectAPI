@@ -105,6 +105,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
   }
 };
 
+// DEPRECATED
 export const fetchAllOrdersFromMonday = async (): Promise<any> => {
   const query = `
     query ($boardId: [ID!]!) {
@@ -137,9 +138,10 @@ export const fetchAllOrdersFromMonday = async (): Promise<any> => {
   }
 };
 
+// DEPRECATED
 export const syncOrders = async (req: Request, res: Response): Promise<void> => {
   try {
-    const boardId = process.env.BOARD_ID_ORDERS!;
+    const boardId: string = process.env.BOARD_ID_ORDERS!;
     const existingItems = await fetchAllOrdersFromMonday();
 
     const deletePromises = existingItems.map((item: any) => {
