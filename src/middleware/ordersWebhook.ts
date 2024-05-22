@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { createOrder, updateOrderStatus } from '../controllers/orders.controller';
 
-export const handleOrdersWebhook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleOrdersWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
