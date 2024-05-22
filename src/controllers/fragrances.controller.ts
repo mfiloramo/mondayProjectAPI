@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import mondaySdk from 'monday-sdk-js';
 
 const monday = mondaySdk();
@@ -26,16 +26,19 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const data = req.body;
-    console.log({ data });
-    const { name, description, category, created_at, updated_at, image_url } = req.body;
+    const { description, category, created_at, updated_at, image_url } = req.body;
+    let name: string | null;
+    let { pulseName } = req.body;
+
+    if (pulseName) name = pulseName;
+    else name = req.body.name;
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
       replacements: { name, description, category, created_at, updated_at, image_url },
     });
 
-    const fragranceId: number = response[0].id;
 
+    // DEPRECATED
     // const mutation: string = `
     //   mutation {
     //     create_item(
