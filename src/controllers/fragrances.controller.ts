@@ -26,11 +26,9 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log('addFragrance pinged...');
-
     const { description, category, created_at, updated_at, image_url } = req.body;
     let name: string | null;
-    let { pulseName } = req.body;
+    let { pulseName } = req.body.event;
 
     if (pulseName) name = pulseName;
     else name = req.body.name;
