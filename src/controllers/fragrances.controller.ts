@@ -26,16 +26,25 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { description, category, created_at, updated_at, image_url } = req.body;
-    let name: string | null;
+    let { description, category, image_url } = req.body;
     let { pulseName } = req.body.event;
+    const created_at: string = new Date().toISOString();
 
+
+    let name: string | null;
     if (pulseName) name = pulseName;
     else name = req.body.name;
-    console.log({ name });
+
+    if (!description) description = null;
+    if (!category) category = null;
+    if (!image_url) image_url = null;
+
+    console.log({ description });
+    console.log({ category });
+    console.log({ image_url });
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
-      replacements: { name, description, category, created_at, updated_at, image_url },
+      replacements: { name, description, category, created_at, image_url },
     });
 
 
