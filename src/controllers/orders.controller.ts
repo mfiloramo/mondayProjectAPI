@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import mondaySdk from 'monday-sdk-js';
+import * as util from "node:util";
 
 const monday = mondaySdk();
 const apiToken: string | undefined = process.env.MONDAY_API_TOKEN;
@@ -95,7 +96,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     id = 1
     status = req.body.event.value.label.text;
 
-    console.log(req.body.event);
+    console.log(req.body.event.value.label);
     console.log(value);
 
     await sequelize.query('EXECUTE UpdateOrderStatus :id, :status', {
@@ -130,6 +131,7 @@ export const fetchAllOrdersFromMonday = async (): Promise<any> => {
 
   try {
     const response: any = await mondayApiToken.post('', { query, variables });
+    console.log(util.inspect(response.data.data.boards[0].items_page, true, null, true));
     if (response.data.errors) {
       throw new Error(`Error fetching items: ${response.data.errors[0].message}`);
     }
