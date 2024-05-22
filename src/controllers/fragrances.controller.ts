@@ -82,16 +82,16 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
       case 'Name':
-        name = value.value;
+        name = value.value.label.text;
         break;
       case 'Description':
-        description = value.value;
+        description = value.value.label.text;
         break;
       case 'Category':
         category = req.body.event.columnTitle.toLowerCase();
         break;
       case 'Image URL':
-        image_url = value.value;
+        image_url = value.value.label.text;
         break;
       default:
         res.status(400).send('Unknown column ID');
