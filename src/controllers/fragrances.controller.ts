@@ -29,6 +29,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     let { description, category, image_url } = req.body;
     let { pulseName } = req.body.event;
     const created_at: string = new Date().toISOString();
+    const updated_at: string = new Date().toISOString();
 
 
     let name: string | null;
@@ -44,7 +45,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     console.log({ image_url });
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
-      replacements: { name, description, category, created_at, image_url },
+      replacements: { name, description, category, created_at, updated_at, image_url },
     });
 
 
