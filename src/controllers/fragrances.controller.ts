@@ -34,6 +34,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     if (pulseName) name = pulseName;
     else name = req.body.name;
+    console.log({ name });
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
       replacements: { name, description, category, created_at, updated_at, image_url },
