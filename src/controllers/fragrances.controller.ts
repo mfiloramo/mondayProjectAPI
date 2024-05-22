@@ -76,13 +76,11 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     let category: string | null = null;
     let image_url: string | null = null;
 
-    console.log(req.body.event.value);
-    console.log(req.body.event.value.label);
 
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
       case 'Name':
-        name = value.value.label.text;
+        name = value.value;
         break;
       case 'Description':
         description = value.value.label.text;
