@@ -67,9 +67,10 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { columnTitle, value } = req.body.event;
+    const { pulseName, columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
 
+    let id: number = pulseName;
     let name: string | null = null;
     let description: string | null = null;
     let category: string | null = null;
@@ -97,8 +98,8 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     }
 
     // Execute the stored procedure with the updated values
-    const response = await sequelize.query('EXECUTE UpdateFragrance :name, :description, :category, :updated_at, :image_url', {
-      replacements: { name, description, category, updated_at, image_url },
+    const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
+      replacements: { id, name, description, category, updated_at, image_url },
     });
 
     res.json(response[0]);
