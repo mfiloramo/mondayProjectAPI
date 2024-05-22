@@ -59,7 +59,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       mutation {
         create_item (
           board_id: ${process.env.BOARD_ID_ORDERS},
-          item_name: "Order ${orderId}",
+          item_name: "${orderId}",
           column_values: "${JSON.stringify({
             first_name__1: first_name,
             text__1: last_name,
@@ -91,9 +91,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    let { id, status, value } = req.body;
+    let { id, status, pulseName } = req.body;
 
-    id = 1
     status = req.body.event.value.label.text;
 
     console.log(req.body);
@@ -169,7 +168,7 @@ export const syncOrders = async (req: Request, res: Response): Promise<void> => 
         mutation {
           create_item (
             board_id: ${boardId},
-            item_name: "Order ${item.id}",
+            item_name: "${item.id}",
             column_values: "${JSON.stringify({
               first_name__1: item.first_name,
               text__1: item.last_name,
