@@ -26,6 +26,8 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
+    const data = req.body;
+    console.log({ data });
     const { name, description, category, created_at, updated_at, image_url } = req.body;
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :name, :description, :category, :created_at, :updated_at, :image_url', {
@@ -34,29 +36,29 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     const fragranceId: number = response[0].id;
 
-    const mutation: string = `
-      mutation {
-        create_item(
-          board_id: ${process.env.BOARD_ID_FRAGRANCES},
-          item_name: "${name}",
-          column_values: "${JSON.stringify({
-      name: { text: name },
-      description: { text: description },
-      category: { text: category },
-      image_url: { text: image_url },
-      created_at: { text: created_at },
-      updated_at: { text: updated_at },
-    }).replace(/"/g, '\\"')}"
-        ) {
-          id
-          name
-        }
-      }`;
-
-    if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-      console.log('Monday API Response: ', mondayResponse.data);
-    }
+    // const mutation: string = `
+    //   mutation {
+    //     create_item(
+    //       board_id: ${process.env.BOARD_ID_FRAGRANCES},
+    //       item_name: "${name}",
+    //       column_values: "${JSON.stringify({
+    //   name: { text: name },
+    //   description: { text: description },
+    //   category: { text: category },
+    //   image_url: { text: image_url },
+    //   created_at: { text: created_at },
+    //   updated_at: { text: updated_at },
+    // }).replace(/"/g, '\\"')}"
+    //     ) {
+    //       id
+    //       name
+    //     }
+    //   }`;
+    //
+    // if (apiToken) {
+    //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+    //   console.log('Monday API Response: ', mondayResponse.data);
+    // }
 
     res.json(response[0]);
   } catch (error: any) {
@@ -110,22 +112,11 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: number = parseInt(req.body.event.itemName);
+    console.log('tomato', id);
 
     await sequelize.query('EXECUTE DeleteFragrance :id', {
       replacements: { id },
     });
-
-    const mutation: string = `
-      mutation {
-        delete_item(item_id: ${ id }) {
-          id
-        }
-      }`;
-
-    if (apiToken) {
-      const mondayResponse = await mondayApiToken.post('', { query: mutation });
-      console.log('Monday API Response: ', mondayResponse.data);
-    }
 
     res.json(`Fragrance ${ id } deleted successfully`);
   } catch (error: any) {
@@ -134,9 +125,10 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
   }
 };
 
+// DEPRECATED
 export const syncFragrances = async (req: Request, res: Response): Promise<void> => {
   try {
-    const boardId = process.env.BOARD_ID_FRAGRANCES!;
+    const boardId: string = process.env.BOARD_ID_FRAGRANCES!;
     const existingItems = await fetchAllFragrancesFromMonday();
 
     const deletePromises = existingItems.map((item: any) => {
@@ -148,7 +140,7 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
         }
       `;
       throttle(100);
-      return mondayApiToken.post('', { query: deleteMutation });
+      return mondayApiToken.post('', { query: deleteMutation })
     });
 
     await Promise.all(deletePromises);
@@ -160,7 +152,7 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
         mutation {
           create_item(
             board_id: ${boardId},
-            item_name: "${item.id}",
+            item_name: "${ item.id }",
             column_values: "${JSON.stringify({
               text8__1: item.name,
               description__1: item.description,
@@ -168,12 +160,13 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
               text__1: item.image_url,
               text1__1: item.created_at,
               text2__1: item.updated_at,
-            }).replace(/"/g, '\\"')}"
+          }).replace(/"/g, '\\"')}"
           ) {
             id
             name
           }
         }`;
+
       await mondayApiToken.post('', { query: mutation });
       await throttle(300);
     }
@@ -185,6 +178,7 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
   }
 };
 
+// DEPRECATED
 export const fetchAllFragrancesFromMonday = async (): Promise<any> => {
   const query = `
     query ($boardId: [ID!]!) {
@@ -226,4 +220,5 @@ export const fetchAllFragrancesFromMonday = async (): Promise<any> => {
 };
 
 /** UTILITY FUNCTIONS */
-const throttle = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const throttle: Function = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
