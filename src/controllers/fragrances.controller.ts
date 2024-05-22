@@ -75,11 +75,6 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     let category: string | null = null;
     let image_url: string | null = null;
 
-    console.log({ name });
-    console.log({ description });
-    console.log({ category });
-    console.log({ image_url });
-
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
       case 'Name':
@@ -89,7 +84,8 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         description = value.value;
         break;
       case 'Category':
-        category = value.value;
+        category = req.body.event.columnTitle;
+        console.log({ category });
         break;
       case 'Image URL':
         image_url = value.value;
@@ -158,7 +154,6 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
     const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
 
     for (const item of dbFragrances[0]) {
-      console.log(item);
       const mutation: string = `
         mutation {
           create_item(
