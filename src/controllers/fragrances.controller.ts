@@ -108,15 +108,15 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 };
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { pulseId } = req.body.event;
 
     await sequelize.query('EXECUTE DeleteFragrance :id', {
-      replacements: { id },
+      replacements: { pulseId },
     });
 
     const mutation: string = `
       mutation {
-        delete_item(item_id: ${id}) {
+        delete_item(item_id: ${ pulseId }) {
           id
         }
       }`;
@@ -126,7 +126,7 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
       console.log('Monday API Response: ', mondayResponse.data);
     }
 
-    res.json(`Fragrance ${id} deleted successfully`);
+    res.json(`Fragrance ${ pulseId } deleted successfully`);
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
