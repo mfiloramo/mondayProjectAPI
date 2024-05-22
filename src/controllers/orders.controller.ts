@@ -91,9 +91,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    let { pulseName } = req.body;
     const status = req.body.event.value.label.text;
-    const id = pulseName
+    const id = req.body.event.value.pulsename;
 
     await sequelize.query('EXECUTE UpdateOrderStatus :id, :status', {
       replacements: { id, status }
