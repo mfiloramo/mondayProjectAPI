@@ -12,9 +12,10 @@ const app: Express = express();
 const PORT: string | number = process.env.PORT || 3057;
 const server = http.createServer(app);
 
-// Middleware to log the request body
-const logRequestBody = (req: Request, res: Response, next: any) => {
-  console.log(req.body);
+// Middleware to log the request body and path
+const logRequestBodyAndPath = (req: Request, res: Response, next: any) => {
+  console.log(`Path: ${req.path}`);
+  console.log(`Body:`, req.body);
   next();
 };
 
@@ -29,7 +30,7 @@ const logRequestBody = (req: Request, res: Response, next: any) => {
 
 app.use(express.json());
 app.use(cors());
-app.use(logRequestBody); // Add the logging middleware
+app.use(logRequestBodyAndPath); // Add the logging middleware
 
 // SERVER ROUTES
 app
