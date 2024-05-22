@@ -95,8 +95,6 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
 
     status = req.body.event.value.label.text;
 
-    console.log(req.body);
-    console.log(value);
 
     await sequelize.query('EXECUTE UpdateOrderStatus :id, :status', {
       replacements: { id, status }
