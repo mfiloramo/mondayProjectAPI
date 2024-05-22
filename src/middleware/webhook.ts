@@ -4,7 +4,7 @@ import { createOrder, updateOrderStatus } from '../controllers/orders.controller
 
 export const handleWebhook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    // console.log(req.body);
+    console.log(req.body);
 
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
@@ -23,7 +23,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
         case 'item_created':
           await addFragrance(req, res);
           break;
-        case 'item_updated':
+        case 'update_column_value':
           await updateFragrance(req, res);
           break;
         case 'item_deleted':
