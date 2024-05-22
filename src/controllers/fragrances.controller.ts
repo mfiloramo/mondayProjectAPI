@@ -66,10 +66,8 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 };
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
-  console.log(req.body)
   try {
     const { id, name, description, category, updated_at, image_url } = req.body;
-
 
     const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
       replacements: { id, name, description, category, updated_at, image_url },
