@@ -66,25 +66,28 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 };
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
+  console.log(req.body)
   try {
-    const { name, description, category, updated_at, image_url } = req.body;
-    const { id } = req.params;
+    const { id, name, description, category, updated_at, image_url } = req.body;
+
 
     const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
       replacements: { id, name, description, category, updated_at, image_url },
     });
 
+    // TAKE THE INPUT, SEE THE COLUMN NAME TO DETERMINE WHAT IT IS, THEN
+
     const mutation: string = `
       mutation {
         change_multiple_column_values(
-          board_id: ${process.env.BOARD_ID_FRAGRANCES},
-          item_id: ${id},
-          column_values: "${JSON.stringify({
-      description: { text: description },
-      category: { text: category },
-      image_url: { text: image_url },
-      updated_at: { text: updated_at },
-    }).replace(/"/g, '\\"')}"
+          board_id: ${ process.env.BOARD_ID_FRAGRANCES },
+          item_id: ${ id },
+          column_values: "${ JSON.stringify({
+          description: { text: description },
+          category: { text: category },
+          image_url: { text: image_url },
+          updated_at: { text: updated_at },
+        }).replace(/"/g, '\\"')}"
         ) {
           id
           name
