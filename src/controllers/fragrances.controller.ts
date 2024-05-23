@@ -81,7 +81,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     const { pulseName, columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
 
-    let id: number = pulseName;
+    let id: number = parseInt(pulseName);
     let name: string | null = null;
     let description: string | null = null;
     let category: string | null = null;
