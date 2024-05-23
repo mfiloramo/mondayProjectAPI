@@ -68,11 +68,10 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { pulseName, columnTitle, value } = req.body.event;
+    const { id, pulseName, columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
+    console.log(req.body.event);
 
-    let id: number = pulseName;
-    console.log({ id });
     let name: string | null = null;
     let description: string | null = null;
     let category: string | null = null;
