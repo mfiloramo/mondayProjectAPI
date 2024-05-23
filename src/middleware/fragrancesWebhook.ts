@@ -4,7 +4,7 @@ import { addFragrance, updateFragrance, deleteFragrance } from '../controllers/f
 export const handleFragrancesWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
     // DEBUG: LOG WEBHOOK PAYLOAD
-    console.log(req.body.event);
+    // console.log(req.body.event);
 
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {

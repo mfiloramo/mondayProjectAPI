@@ -121,16 +121,16 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log('deleteFragrance pinged...');
-    let id!: number;
+    let name!: number;
 
     if (req.body.data) console.log(req.body.data);
-    else id = req.body.id;
+    else name = req.body.event.pulseName;
 
-    await sequelize.query('EXECUTE DeleteFragrance :id', {
-      replacements: { id },
+    await sequelize.query('EXECUTE DeleteFragrance :name', {
+      replacements: { name },
     })
 
-    res.json(`Fragrance ${ id } deleted successfully`);
+    res.json(`Fragrance ${ name } deleted successfully`);
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
@@ -142,7 +142,22 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
   try {
     const boardId: string = process.env.BOARD_ID_FRAGRANCES!;
 
-    // Fetch all fragrances from SQL database
+    const existingItems = await fetchAllFragrancesFromMonday();
+
+    const deletePromises = existingItems.items.map((item: any) => {
+      const deleteMutation: string = `
+        mutation {
+          delete_item(item_id: ${item.id}) {
+            id
+          }
+        }
+      `;
+      throttle(200);
+      return mondayApiToken.post('', { query: deleteMutation })
+    });
+
+    await Promise.all(deletePromises);
+
     const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
     const fragrances = dbFragrances[0];
 
@@ -160,7 +175,7 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
               text__1: item.image_url,
               text1__1: item.created_at,
               text2__1: item.updated_at,
-      }).replace(/"/g, '\\"')}"
+            }).replace(/"/g, '\\"')}"
           ) {
             id
             name

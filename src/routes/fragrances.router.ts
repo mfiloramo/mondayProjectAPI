@@ -16,7 +16,6 @@ router.get('/sync', syncFragrances);
 router.get('/monday', fetchAllFragrancesFromMonday)
 router.post('/', addFragrance);
 router.put('/:id', updateFragrance);
-router.post('/delete', deleteFragrance);
 
 // WEBHOOK
 router.post('/webhook', handleFragrancesWebhook);
