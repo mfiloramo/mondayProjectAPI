@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import mondaySdk from 'monday-sdk-js';
 
 const monday = mondaySdk();
@@ -27,14 +27,13 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     let { description, category, image_url } = req.body;
-    let { pulseName } = req.body.event;
     const created_at: string = new Date().toISOString();
     const updated_at: string = new Date().toISOString();
 
 
     let name: string | null;
-    if (pulseName) name = pulseName;
-    else name = req.body.name;
+    // if (req.body.event.pulseName) name = req.body.event.pulseName;
+    name = req.body.name;
 
     if (!description) description = null;
     if (!category) category = null;
@@ -44,32 +43,23 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
       replacements: { name, description, category, created_at, updated_at, image_url },
     });
 
-    // DEPRECATED
-    // const mutation: string = `
-    //   mutation {
-    //     create_item(
-    //       board_id: ${process.env.BOARD_ID_FRAGRANCES},
-    //       item_name: "${ name }",
-    //       column_values: "${JSON.stringify({
-    //         name: { text: name },
-    //         description: { text: description },
-    //         category: { text: category },
-    //         image_url: { text: image_url },
-    //         created_at: { text: created_at },
-    //         updated_at: { text: updated_at },
-    //       }).replace(/"/g, '\\"')}"
-    //     ) {
-    //       id
-    //       name
-    //     }
-    //   }`;
-    //
-    // if (apiToken) {
-    //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-    //   console.log('Monday API Response: ', mondayResponse.data);
-    // }
+    const newFragranceId = response[0][0].id;
 
-    res.json(response[0]);
+    // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
+    const mutation: string = `
+    mutation {
+      change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "${JSON.stringify({
+        text8__1: { text: newFragranceId },
+      }).replace(/"/g, '\\"')}")
+  }`;
+
+
+    if (apiToken) {
+      const mondayResponse = await mondayApiToken.post('', { query: mutation });
+      console.log("Monday API Response: ", mondayResponse.data);
+    }
+
+    res.json(newFragranceId);
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
@@ -79,7 +69,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     const { pulseName, columnTitle, value } = req.body.event;
-    console.log(req.body.event);
     const updated_at: string = new Date().toISOString();
 
     let id: number = pulseName;
@@ -93,7 +82,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
       case 'Name':
-        name = value.value;
+        name = pulseName;
         break;
       case 'Description':
         description = value.value;
