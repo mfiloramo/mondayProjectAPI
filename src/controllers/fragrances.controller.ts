@@ -121,12 +121,12 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log('deleteEvent:', req.body.event);
-    const id: number = parseInt(req.body.event.itemName);
-    await sequelize.query('EXECUTE DeleteFragrance :id', {
-      replacements: { id },
+    const name: number = parseInt(req.body.event.itemName);
+    await sequelize.query('EXECUTE DeleteFragrance :name', {
+      replacements: { name },
     });
 
-    res.json(`Fragrance ${ id } deleted successfully`);
+    res.json(`Fragrance ${ name } deleted successfully`);
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
