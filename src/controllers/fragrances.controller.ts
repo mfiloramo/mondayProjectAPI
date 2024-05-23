@@ -160,9 +160,9 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
         mutation {
           create_item(
             board_id: ${boardId},
-            item_name: "${ item.id }",
+            item_name: "${ item.name }",
             column_values: "${JSON.stringify({
-              text8__1: item.name,
+              text8__1: item.id,
               description__1: item.description,
               category56__1: item.category,
               text__1: item.image_url,
