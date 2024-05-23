@@ -120,13 +120,16 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log('deleteEvent:', req.body.event);
-    const name: number = req.body.event.itemName;
-    await sequelize.query('EXECUTE DeleteFragrance :name', {
-      replacements: { name },
-    });
+    let id!: number;
 
-    res.json(`Fragrance ${ name } deleted successfully`);
+    if (req.body.data) console.log(req.body.data);
+    else id = req.body.id;
+
+    await sequelize.query('EXECUTE DeleteFragrance :id', {
+      replacements: { id },
+    })
+
+    res.json(`Fragrance ${ id } deleted successfully`);
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
@@ -137,48 +140,36 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
 export const syncFragrances = async (req: Request, res: Response): Promise<void> => {
   try {
     const boardId: string = process.env.BOARD_ID_FRAGRANCES!;
-    const existingItems = await fetchAllFragrancesFromMonday();
 
-    const deletePromises = existingItems.map((item: any) => {
-      const deleteMutation: string = `
-        mutation {
-          delete_item(item_id: ${item.id}) {
-            id
-          }
-        }
-      `;
-      throttle(100);
-      return mondayApiToken.post('', { query: deleteMutation })
-    });
-
-    await Promise.all(deletePromises);
-
+    // Fetch all fragrances from SQL database
     const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
+    const fragrances = dbFragrances[0];
 
-    for (const item of dbFragrances[0]) {
+    for (const item of fragrances) {
+      console.log(item);
       const mutation: string = `
         mutation {
           create_item(
             board_id: ${boardId},
             item_name: "${ item.name }",
             column_values: "${JSON.stringify({
-              text8__1: item.id,
+              text8__1: item.id.toString(),
               description__1: item.description,
               category56__1: item.category,
               text__1: item.image_url,
               text1__1: item.created_at,
               text2__1: item.updated_at,
-          }).replace(/"/g, '\\"')}"
+      }).replace(/"/g, '\\"')}"
           ) {
             id
             name
           }
         }`;
 
-      console.log(mutation);
-
-      await mondayApiToken.post('', { query: mutation });
-      await throttle(300);
+      // Create item on Monday.com
+      await mondayApiToken.post('', { query: mutation })
+        .then((response: any) => console.log(response.data))
+        .catch((error: any) => console.error(error));
     }
 
     res.status(200).send('Fragrances synchronized successfully');
@@ -190,7 +181,8 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
 
 // DEPRECATED
 export const fetchAllFragrancesFromMonday = async (): Promise<any> => {
-  const query = `
+  // MONDAY.COM API QUERY
+  const query: string = `
     query ($boardId: [ID!]!) {
       boards(ids: $boardId) {
         id
@@ -215,6 +207,7 @@ export const fetchAllFragrancesFromMonday = async (): Promise<any> => {
     }
   `;
 
+  // BOARD ID VARIABLES
   const variables = { boardId: process.env.BOARD_ID_FRAGRANCES };
 
   try {
@@ -222,7 +215,8 @@ export const fetchAllFragrancesFromMonday = async (): Promise<any> => {
     if (response.data.errors) {
       throw new Error(`Error fetching items: ${response.data.errors[0].message}`);
     }
-    return response.data.data.boards[0].items_page.items;
+    // console.log(response.data.data);
+    return response.data.data.boards[0].items_page;
   } catch (error) {
     console.error('Error fetching items from Monday.com:', error);
     throw error;
