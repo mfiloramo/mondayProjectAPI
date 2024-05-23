@@ -122,10 +122,8 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
   try {
     let name: number;
 
-    console.log(req.body.event);
-
-    if (req.body.event.pulseName) {
-      name = req.body.event.pulseName;
+    if (req.body.event.itemName) {
+      name = req.body.event.itemName;
     } else name = req.body.id;
 
     await sequelize.query('EXECUTE DeleteFragrance :name', {
