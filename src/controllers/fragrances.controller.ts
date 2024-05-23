@@ -120,6 +120,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('deleteFragrance pinged...');
     let id!: number;
 
     if (req.body.data) console.log(req.body.data);
