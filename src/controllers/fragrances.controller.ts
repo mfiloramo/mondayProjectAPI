@@ -48,7 +48,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
     const mutation: string = `
     mutation {
-      change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "${JSON.stringify({
+      change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${newFragranceId}, column_values: "${JSON.stringify({
         text8__1: { text: newFragranceId },
       }).replace(/"/g, '\\"')}")
   }`;
