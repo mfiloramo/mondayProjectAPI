@@ -45,6 +45,11 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     }).replace(/"/g, '\\"')}")
     }`;
 
+    if (apiToken) {
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+      console.log("Monday API Response: ", mondayResponse.data);
+    }
+
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
