@@ -126,17 +126,17 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
       replacements: { id },
     });
 
-    const mutation: string = `
-      mutation {
-        delete_item(item_id: ${id}) {
-          id
-        }
-      }`;
-
-    if (apiToken) {
-      const mondayResponse = await mondayApiToken.post('', { query: mutation });
-      console.log('Monday API Response: ', mondayResponse.data);
-    }
+    // const mutation: string = `
+    //   mutation {
+    //     delete_item(item_id: ${id}) {
+    //       id
+    //     }
+    //   }`;
+    //
+    // if (apiToken) {
+    //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+    //   console.log('Monday API Response: ', mondayResponse.data);
+    // }
 
     res.json(`Fragrance ${ id } deleted successfully`);
   } catch (error: any) {
