@@ -91,19 +91,21 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       replacements: { id, name, description, category, updated_at, image_url },
     });
 
+    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
     // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
-    const mutation: string = `
-    mutation {
-      change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${pulseId}, column_values: "${JSON.stringify({
-        text8__1: { text: pulseId },
-      }).replace(/"/g, '\\"')}")
-    }`;
+    // const mutation: string = `
+    // mutation {
+    //   change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${pulseId}, column_values: "${JSON.stringify({
+    //     text8__1: { text: pulseId },
+    //   }).replace(/"/g, '\\"')}")
+    // }`;
 
+    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
     // SEND DATA MUTATION TO MONDAY API
-    if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-      console.log("Monday API Response: ", mondayResponse.data);
-    }
+    // if (apiToken) {
+    //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+    //   console.log("Monday API Response: ", mondayResponse.data);
+    // }
 
     // SEND RESPONSE
     res.json(`Fragrance ${ id } created successfully`);
@@ -126,13 +128,15 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
       replacements: { id },
     });
 
+    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
     // const mutation: string = `
     //   mutation {
     //     delete_item(item_id: ${id}) {
     //       id
     //     }
     //   }`;
-    //
+
+    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
     // if (apiToken) {
     //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
     //   console.log('Monday API Response: ', mondayResponse.data);
