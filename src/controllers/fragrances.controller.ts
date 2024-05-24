@@ -173,32 +173,33 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
     const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
     const fragrances = dbFragrances[0];
 
-    for (const item of fragrances) {
-      console.log(item);
-      const mutation: string = `
-        mutation {
-          create_item(
-            board_id: ${boardId},
-            item_name: "${ item.name }",
-            column_values: "${JSON.stringify({
-              text8__1: item.id.toString(),
-              description__1: item.description,
-              category56__1: item.category,
-              text__1: item.image_url,
-              text1__1: item.created_at,
-              text2__1: item.updated_at,
-            }).replace(/"/g, '\\"')}"
-          ) {
-            id
-            name
-          }
-        }`;
+    // TODO: THESE MUTATIONS ARE CAUSING A LOOP WITH THE MONDAY.COM WEBHOOKS. A CHANGE IS MADE ON THE FRONTEND, THEN A WEBHOOK GETS TRIGGERED, CARRYING WITH IT THE PAYLOAD OF INFORMATION. THAT INFORMATION IS LEVERAGED BY THE ORM AGAINST THE DATABASE, THEN I'M CALLING A MUTATION TO UPDATE IT IN THE TABLE, WHICH RE-TRIGGERS THE WEBHOOK AND REPEATS THE PROCESS INFINITELY.
+    // for (const item of fragrances) {
+    //   console.log(item);
+    //   const mutation: string = `
+    //     mutation {
+    //       create_item(
+    //         board_id: ${boardId},
+    //         item_name: "${ item.name }",
+    //         column_values: "${JSON.stringify({
+    //           text8__1: item.id.toString(),
+    //           description__1: item.description,
+    //           category56__1: item.category,
+    //           text__1: item.image_url,
+    //           text1__1: item.created_at,
+    //           text2__1: item.updated_at,
+    //         }).replace(/"/g, '\\"')}"
+    //       ) {
+    //         id
+    //         name
+    //       }
+    //     }`;
 
-      // Create item on Monday.com
-      await mondayApiToken.post('', { query: mutation })
-        .then((response: any) => console.log(response.data))
-        .catch((error: any) => console.error(error));
-    }
+      // // Create item on Monday.com
+      // await mondayApiToken.post('', { query: mutation })
+      //   .then((response: any) => console.log(response.data))
+      //   .catch((error: any) => console.error(error));
+    // }
 
     res.status(200).send('Fragrances synchronized successfully');
   } catch (error: any) {
