@@ -37,19 +37,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
       replacements: { id, name, created_at, updated_at },
     })
 
-    // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
-    const mutation: string = `
-    mutation {
-      change_column_value (board_id: ${ process.env.BOARD_ID_FRAGRANCES }, item_id: ${ pulseId }, column_values: "${ JSON.stringify({
-      text8__1: { text: pulseId },
-    }).replace(/"/g, '\\"') }")
-    }`;
-
-    if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-      console.log("Monday API Response: ", mondayResponse.data);
-    }
-
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
@@ -58,10 +45,12 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
+    // DESTRUCTURE DATA FROM MONDAY.COM UPDATE EVENT
     const { pulseId, pulseName, columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
     const id: number = pulseId;
 
+    // DECLARE VARIABLES TO CAPTURE DATA FROM PAYLOAD
     let name: string | null = null;
     let description: string | null = null;
     let category: string | null = null;
@@ -91,22 +80,6 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       replacements: { id, name, description, category, updated_at, image_url },
     });
 
-    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
-    // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
-    // const mutation: string = `
-    // mutation {
-    //   change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${pulseId}, column_values: "${JSON.stringify({
-    //     text8__1: { text: pulseId },
-    //   }).replace(/"/g, '\\"')}")
-    // }`;
-
-    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
-    // SEND DATA MUTATION TO MONDAY API
-    // if (apiToken) {
-    //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-    //   console.log("Monday API Response: ", mondayResponse.data);
-    // }
-
     // SEND RESPONSE
     res.json(`Fragrance ${ id } created successfully`);
   } catch (error: any) {
@@ -127,20 +100,6 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
     await sequelize.query('EXECUTE DeleteFragrance :id', {
       replacements: { id },
     });
-
-    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
-    // const mutation: string = `
-    //   mutation {
-    //     delete_item(item_id: ${id}) {
-    //       id
-    //     }
-    //   }`;
-
-    // DISABLED TO AVOID INFINITE WEBHOOK API CALL LOOPS
-    // if (apiToken) {
-    //   const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-    //   console.log('Monday API Response: ', mondayResponse.data);
-    // }
 
     res.json(`Fragrance ${ id } deleted successfully`);
   } catch (error: any) {
@@ -173,33 +132,33 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
     const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
     const fragrances = dbFragrances[0];
 
-    // TODO: THESE MUTATIONS ARE CAUSING A LOOP WITH THE MONDAY.COM WEBHOOKS. A CHANGE IS MADE ON THE FRONTEND, THEN A WEBHOOK GETS TRIGGERED, CARRYING WITH IT THE PAYLOAD OF INFORMATION. THAT INFORMATION IS LEVERAGED BY THE ORM AGAINST THE DATABASE, THEN I'M CALLING A MUTATION TO UPDATE IT IN THE TABLE, WHICH RE-TRIGGERS THE WEBHOOK AND REPEATS THE PROCESS INFINITELY.
-    // for (const item of fragrances) {
-    //   console.log(item);
-    //   const mutation: string = `
-    //     mutation {
-    //       create_item(
-    //         board_id: ${boardId},
-    //         item_name: "${ item.name }",
-    //         column_values: "${JSON.stringify({
-    //           text8__1: item.id.toString(),
-    //           description__1: item.description,
-    //           category56__1: item.category,
-    //           text__1: item.image_url,
-    //           text1__1: item.created_at,
-    //           text2__1: item.updated_at,
-    //         }).replace(/"/g, '\\"')}"
-    //       ) {
-    //         id
-    //         name
-    //       }
-    //     }`;
 
-      // // Create item on Monday.com
-      // await mondayApiToken.post('', { query: mutation })
-      //   .then((response: any) => console.log(response.data))
-      //   .catch((error: any) => console.error(error));
-    // }
+    for (const item of fragrances) {
+      console.log(item);
+      const mutation: string = `
+        mutation {
+          create_item(
+            board_id: ${boardId},
+            item_name: "${ item.name }",
+            column_values: "${JSON.stringify({
+              text8__1: item.id.toString(),
+              description__1: item.description,
+              category56__1: item.category,
+              text__1: item.image_url,
+              text1__1: item.created_at,
+              text2__1: item.updated_at,
+            }).replace(/"/g, '\\"')}"
+          ) {
+            id
+            name
+          }
+        }`;
+
+      // Create item on Monday.com
+      await mondayApiToken.post('', { query: mutation })
+        .then((response: any) => console.log(response.data))
+        .catch((error: any) => console.error(error));
+    }
 
     res.status(200).send('Fragrances synchronized successfully');
   } catch (error: any) {
