@@ -27,6 +27,7 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     const { pulseId, pulseName } = req.body;
+    console.log(req.body);
     const id = pulseId;
     const name = pulseName;
 
