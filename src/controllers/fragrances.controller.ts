@@ -115,11 +115,11 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log(req.body.event);
-    const { pulseId } = req.body.event;
+    const { itemId } = req.body.event;
     let id: number;
 
-    if (pulseId) {
-      id = req.body.event.pulseId;
+    if (itemId) {
+      id = itemId;
     } else id = req.body.id;
 
     await sequelize.query('EXECUTE DeleteFragrance :id', {
