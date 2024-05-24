@@ -156,7 +156,7 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
 
       // Create item on Monday.com
       await mondayApiToken.post('', { query: mutation })
-        .then((response: any) => console.log(response.data))
+        .then((response: any) => response)
         .catch((error: any) => console.error(error));
     }
 
