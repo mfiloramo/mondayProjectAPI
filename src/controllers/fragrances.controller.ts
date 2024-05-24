@@ -72,10 +72,24 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         res.status(400).send('Unknown column ID');
     }
 
-    // Execute the stored procedure with the updated values
+    // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
     const response = await sequelize.query('EXECUTE UpdateFragrance :id, :pulseId, :name, :description, :category, :updated_at, :image_url', {
       replacements: { pulseId, name, description, category, updated_at, image_url },
     });
+
+    // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
+    const mutation: string = `
+    mutation {
+      change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${pulseId}, column_values: "${JSON.stringify({
+        text8__1: { text: pulseId },
+      }).replace(/"/g, '\\"')}")
+    }`;
+
+
+    if (apiToken) {
+      const mondayResponse = await mondayApiToken.post('', { query: mutation });
+      console.log("Monday API Response: ", mondayResponse.data);
+    }
 
     res.json(response[0]);
   } catch (error: any) {
