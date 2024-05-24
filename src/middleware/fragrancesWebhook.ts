@@ -19,6 +19,7 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     switch (event.type) {
       case 'create_pulse':
+        console.log(event);
         await addFragrance(req, res);
         break;
       case 'update_column_value':
