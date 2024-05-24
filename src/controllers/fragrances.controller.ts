@@ -114,6 +114,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log(req.body.event);
     const { pulseId } = req.body.event;
     let id: number;
 
