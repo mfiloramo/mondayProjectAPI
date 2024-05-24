@@ -99,13 +99,14 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       }).replace(/"/g, '\\"')}")
     }`;
 
-
+    // SEND DATA MUTATION TO MONDAY API
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
       console.log("Monday API Response: ", mondayResponse.data);
     }
 
-    res.json(response[0]);
+    // SEND RESPONSE
+    res.json(`Fragrance ${ id } created successfully`);
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
@@ -114,7 +115,6 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
 export const deleteFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log(req.body.event);
     const { itemId } = req.body.event;
     let id: number;
 
@@ -124,7 +124,19 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
 
     await sequelize.query('EXECUTE DeleteFragrance :id', {
       replacements: { id },
-    })
+    });
+
+    const mutation: string = `
+      mutation {
+        delete_item(item_id: ${id}) {
+          id
+        }
+      }`;
+
+    if (apiToken) {
+      const mondayResponse = await mondayApiToken.post('', { query: mutation });
+      console.log('Monday API Response: ', mondayResponse.data);
+    }
 
     res.json(`Fragrance ${ id } deleted successfully`);
   } catch (error: any) {
