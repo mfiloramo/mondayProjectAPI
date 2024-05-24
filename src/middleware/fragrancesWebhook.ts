@@ -29,7 +29,7 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
         await deleteFragrance(req, res);
         break;
       default:
-        res.status(400).send('Unknown event');
+        res.status(400).send('Unknown Monday.com webhook event');
         return;
     }
   } catch (error: any) {
