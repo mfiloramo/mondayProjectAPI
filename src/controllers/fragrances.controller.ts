@@ -35,29 +35,20 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :id, :name, :created_at, :updated_at', {
       replacements: { id, name, created_at, updated_at },
-    });
+    })
 
     // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
     const mutation: string = `
     mutation {
-      change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${pulseId}, column_values: "${JSON.stringify({
+      change_column_value (board_id: ${ process.env.BOARD_ID_FRAGRANCES }, item_id: ${ pulseId }, column_values: "${ JSON.stringify({
       text8__1: { text: pulseId },
-    }).replace(/"/g, '\\"')}")
-      {
-        id
-        column_values {
-          id
-          text
-        }
-      }
+    }).replace(/"/g, '\\"') }")
     }`;
 
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
       console.log("Monday API Response: ", mondayResponse.data);
     }
-
-    res.status(200).send(response);
 
   } catch (error: any) {
     res.status(500).send(error);
@@ -69,6 +60,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
   try {
     const { pulseId, pulseName, columnTitle, value } = req.body.event;
     const updated_at: string = new Date().toISOString();
+    const id: number = pulseId;
 
     let name: string | null = null;
     let description: string | null = null;
@@ -95,8 +87,8 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     }
 
     // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
-    const response = await sequelize.query('EXECUTE UpdateFragrance :id, :pulseId, :name, :description, :category, :updated_at, :image_url', {
-      replacements: { pulseId, name, description, category, updated_at, image_url },
+    const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
+      replacements: { id, name, description, category, updated_at, image_url },
     });
 
     // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
