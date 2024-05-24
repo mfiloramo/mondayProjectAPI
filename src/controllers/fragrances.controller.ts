@@ -35,7 +35,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     const response: any = await sequelize.query('EXECUTE AddFragrance :id, :name, :created_at, :updated_at', {
       replacements: { id, name, created_at, updated_at },
-    })
+    });
 
     // SEND NEW FRAGRANCE ID TO MONDAY.COM BOARD
     const mutation: string = `
@@ -43,12 +43,21 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
       change_column_value (board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${pulseId}, column_values: "${JSON.stringify({
       text8__1: { text: pulseId },
     }).replace(/"/g, '\\"')}")
+      {
+        id
+        column_values {
+          id
+          text
+        }
+      }
     }`;
 
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
       console.log("Monday API Response: ", mondayResponse.data);
     }
+
+    res.status(200).send(response);
 
   } catch (error: any) {
     res.status(500).send(error);
