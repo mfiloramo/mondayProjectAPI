@@ -3,10 +3,11 @@ import { addFragrance, updateFragrance, deleteFragrance } from '../controllers/f
 
 export const handleFragrancesWebhook = async (req: Request, res: Response): Promise<void> => {
   // TEMPORARY: MISSING ID COLUMN VALUE HANDLING
-  if (req.body.event.columnId === 'text8__1') return;
+  if (req.body.event.columnId === 'text8__1') {
+    res.json('Value');
+  }
 
   try {
-    console.log(req.body);
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
       res.send({ challenge: req.body.challenge });
