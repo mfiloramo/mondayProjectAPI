@@ -85,9 +85,11 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         image_url = value.value;
         break;
       case 'Created At':
+        console.log(value)
         created_at = new Date(value.value).toISOString();
         break;
       case 'Updated At':
+        console.log(value)
         updated_at = new Date(value.value).toISOString();
         break;
       default:
@@ -96,7 +98,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     }
 
     // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
-    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, created_at, :updated_at, :image_url', {
+    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :created_at, :updated_at, :image_url', {
       replacements: { id, name, description, category, created_at, updated_at, image_url },
     })
       .then((response: any): void => {
