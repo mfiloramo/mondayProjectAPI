@@ -85,6 +85,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         break;
       default:
         res.status(400).send('Unknown column ID');
+        return;
     }
 
     // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
@@ -97,6 +98,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         return;
       })
       .catch((error: any): void => console.error(error));
+    return;
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
