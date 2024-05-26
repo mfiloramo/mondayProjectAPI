@@ -70,9 +70,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             text__1: last_name,
             status7__1: status,
             quantity__1: numberOfKits,
-            fragrance_1_id1__1: fragrance1Id.toString(),
-            numbers__1: fragrance2Id.toString(),
-            fragrance_3_id__1: fragrance3Id.toString(),
+            fragrance_1_id1__1: fragrance1Id,
+            numbers__1: fragrance2Id,
+            fragrance_3_id__1: fragrance3Id,
             text34__1: created_at,
             text4__1: updated_at
           }).replace(/"/g, '\\"')}"
