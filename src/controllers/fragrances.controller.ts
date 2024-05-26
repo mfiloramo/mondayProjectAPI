@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
-import axios, { Axios, AxiosInstance, AxiosResponse } from 'axios';
-import mondaySdk from 'monday-sdk-js';
+import axios, { AxiosInstance } from 'axios';
 
-const monday = mondaySdk();
 const apiToken: string | undefined = process.env.MONDAY_API_TOKEN;
+const processedItems = new Set();
 
 const mondayApiToken: AxiosInstance = axios.create({
   baseURL: 'https://api.monday.com/v2',
@@ -26,24 +25,35 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 };
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
-  // ADD NEW FRAGRANCE
   try {
     const { pulseId, pulseName } = req.body.event;
+
+    if (processedItems.has(pulseId)) {
+      console.log(`Item ${pulseId} already processed.`);
+      res.status(200).send({ message: 'Item already processed.' });
+    }
+
+    processedItems.add(pulseId);
+    console.log(processedItems);
+
     const id = pulseId;
     const name = pulseName;
 
-    const created_at: string = new Date().toISOString();
-    const updated_at: string = new Date().toISOString();
+    const created_at = new Date().toISOString();
+    const updated_at = new Date().toISOString();
 
-    const response: any = await sequelize.query('EXECUTE AddFragrance :id, :name, :created_at, :updated_at', {
+    await sequelize.query('EXECUTE AddFragrance :id, :name, :created_at, :updated_at', {
       replacements: { id, name, created_at, updated_at },
-    })
+    });
+
+    res.status(200).send({ message: 'Fragrance added successfully.' });
 
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
   }
 };
+
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -131,36 +141,36 @@ export const syncFragrances = async (req: Request, res: Response): Promise<void>
 
     await Promise.all(deletePromises);
 
-    const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
-    const fragrances = dbFragrances[0];
-
-
-    for (const item of fragrances) {
-      console.log(item);
-      const mutation: string = `
-        mutation {
-          create_item(
-            board_id: ${boardId},
-            item_name: "${ item.name }",
-            column_values: "${JSON.stringify({
-              text8__1: item.id.toString(),
-              description__1: item.description,
-              category56__1: item.category,
-              text__1: item.image_url,
-              text1__1: item.created_at,
-              text2__1: item.updated_at,
-            }).replace(/"/g, '\\"')}"
-          ) {
-            id
-            name
-          }
-        }`;
-
-      // Create item on Monday.com
-      await mondayApiToken.post('', { query: mutation })
-        .then((response: any) => response)
-        .catch((error: any) => console.error(error));
-    }
+    // const dbFragrances: any = await sequelize.query('EXECUTE GetAllFragrances');
+    // const fragrances = dbFragrances[0];
+    //
+    //
+    // for (const item of fragrances) {
+    //   console.log(item);
+    //   const mutation: string = `
+    //     mutation {
+    //       create_item(
+    //         board_id: ${boardId},
+    //         item_name: "${ item.name }",
+    //         column_values: "${JSON.stringify({
+    //           text8__1: item.id.toString(),
+    //           description__1: item.description,
+    //           category56__1: item.category,
+    //           text__1: item.image_url,
+    //           text1__1: item.created_at,
+    //           text2__1: item.updated_at,
+    //         }).replace(/"/g, '\\"')}"
+    //       ) {
+    //         id
+    //         name
+    //       }
+    //     }`;
+    //
+    //   // Create item on Monday.com
+    //   await mondayApiToken.post('', { query: mutation })
+    //     .then((response: any) => response)
+    //     .catch((error: any) => console.error(error));
+    // }
 
     res.status(200).send('Fragrances synchronized successfully');
   } catch (error: any) {
