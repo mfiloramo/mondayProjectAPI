@@ -51,9 +51,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           first_name,
           last_name,
           number_of_kits: numberOfKits,
-          fragrance1_id: fragrance1Id.toString(),
-          fragrance2_id: fragrance2Id.toString(),
-          fragrance3_id: fragrance3Id.toString()
+          fragrance1_id: fragrance1Id,
+          fragrance2_id: fragrance2Id,
+          fragrance3_id: fragrance3Id
         }
       }
     );
