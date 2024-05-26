@@ -69,7 +69,6 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     let category: string | null = null;
     let image_url: string | null = null;
 
-
     // UPDATE IDENTIFIED COLUMN
     switch (columnTitle) {
       case 'Name':
@@ -89,12 +88,15 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     }
 
     // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
-    const response = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
+    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
       replacements: { id, name, description, category, updated_at, image_url },
-    });
-
-    // SEND RESPONSE
-    res.json(`Fragrance ${ id } created successfully`);
+    })
+      .then((response: any): void => {
+        // SEND RESPONSE
+        res.json(`Fragrance ${ id } created successfully. Response from server: ${ response }`)
+        return;
+      })
+      .catch((error: any): void => console.error(error));
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
