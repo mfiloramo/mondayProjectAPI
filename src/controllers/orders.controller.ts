@@ -40,9 +40,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     } = req.body;
 
     const numberOfKits: number = parseInt(number_of_kits, 10);
-    const fragrance1Id: number = parseInt(fragrance1_id, 10);
-    const fragrance2Id: number = parseInt(fragrance2_id, 10);
-    const fragrance3Id: number = parseInt(fragrance3_id, 10);
+    const fragrance1Id: bigint = BigInt(fragrance1_id);
+    const fragrance2Id: bigint = BigInt(fragrance2_id);
+    const fragrance3Id: bigint = BigInt(fragrance3_id);
 
     const response: any = await sequelize.query(
       'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id',
