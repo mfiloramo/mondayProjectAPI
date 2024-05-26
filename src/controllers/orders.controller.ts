@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import mondaySdk from 'monday-sdk-js';
+import dayjs from 'dayjs';
 import * as util from "node:util";
 
 const monday = mondaySdk();
@@ -35,9 +36,10 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       fragrance2_id,
       fragrance3_id,
       status,
-      created_at,
-      updated_at
     } = req.body;
+
+    const created_at: string = new Date().toISOString();
+    const updated_at: string = new Date().toISOString();
 
     const numberOfKits: number = parseInt(number_of_kits, 10);
     const fragrance1Id: bigint = fragrance1_id;
@@ -53,7 +55,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           number_of_kits: numberOfKits,
           fragrance1_id: fragrance1Id,
           fragrance2_id: fragrance2Id,
-          fragrance3_id: fragrance3Id
+          fragrance3_id: fragrance3Id,
+          created_at: created_at,
+          updated_at: updated_at
         }
       }
     );
@@ -73,8 +77,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             fragrance_1_id1__1: fragrance1Id,
             numbers__1: fragrance2Id,
             fragrance_3_id__1: fragrance3Id,
-            text34__1: created_at,
-            text4__1: updated_at
+            text34__1: dayjs(created_at).format('MMMM D, YYYY'),
+            text4__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"
         ) {
           id
