@@ -5,6 +5,7 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
   // TEMPORARY: MISSING ID COLUMN VALUE HANDLING
   if (req.body.event.columnId === 'text8__1') {
     res.json('Value');
+    return;
   }
 
   try {
