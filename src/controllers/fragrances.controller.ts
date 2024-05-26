@@ -60,12 +60,13 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
   try {
     // DESTRUCTURE DATA FROM MONDAY.COM UPDATE EVENT
     const { pulseId, pulseName, columnTitle, value } = req.body.event;
-    const updated_at: string = new Date().toISOString();
-    const id: number = pulseId;
 
     // DECLARE VARIABLES TO CAPTURE DATA FROM PAYLOAD
+    const id: number = pulseId;
     let name: string | null = null;
     let description: string | null = null;
+    let created_at: string = new Date().toISOString();
+    let updated_at: string | null = null;
     let category: string | null = null;
     let image_url: string | null = null;
 
@@ -83,14 +84,20 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       case 'Image URL':
         image_url = value.value;
         break;
+      case 'Created At':
+        created_at = value.value;
+        break;
+      case 'Updated At':
+        updated_at = value.value;
+        break;
       default:
         res.status(400).send('Unknown column ID');
         return;
     }
 
     // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
-    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
-      replacements: { id, name, description, category, updated_at, image_url },
+    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, created_at, :updated_at, :image_url', {
+      replacements: { id, name, description, category, created_at, updated_at, image_url },
     })
       .then((response: any): void => {
         // SEND RESPONSE
