@@ -3,23 +3,18 @@ import { addFragrance, updateFragrance, deleteFragrance } from '../controllers/f
 
 export const handleFragrancesWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
-    // DEBUG: LOG WEBHOOK PAYLOAD
-    // console.log(req.body.event);
-
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
       res.send({ challenge: req.body.challenge });
       return;
     }
 
-    // TODO: CHANGE PARENTPATH TO event.type
+    // DESTRUCTURE WEBHOOK EVENT FROM REQUEST BODY
     const { event } = req.body;
-    const parentPath: string | undefined = req.baseUrl.split('/').pop();
 
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     switch (event.type) {
       case 'create_pulse':
-        console.log(event);
         await addFragrance(req, res);
         break;
       case 'update_column_value':
@@ -33,6 +28,7 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
         return;
     }
   } catch (error: any) {
+    // LOG ERROR TO CONSOLE AND SEND 500 STATUS
     res.status(500).send(error);
     console.error(error);
   }
