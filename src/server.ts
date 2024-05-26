@@ -21,6 +21,7 @@ const server = http.createServer(app);
 //   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
 // };
 
+// ENABLE MIDDLEWARE
 app.use(express.json());
 app.use(cors());
 

@@ -2,18 +2,14 @@ import express, { Router } from 'express';
 import {
   selectAllFragrances,
   addFragrance,
-  updateFragrance,
-  deleteFragrance,
-  syncFragrances, fetchAllFragrancesFromMonday
+  updateFragrance
 } from '../controllers/fragrances.controller';
-import { handleFragrancesWebhook } from '../middleware/fragrancesWebhook';
+import { handleFragrancesWebhook } from '../middleware/fragrancesWebhooks';
 
 const router: Router = express.Router();
 
 // API ROUTES
 router.get('/', selectAllFragrances);
-router.get('/sync', syncFragrances);
-router.get('/monday', fetchAllFragrancesFromMonday)
 router.post('/', addFragrance);
 router.put('/:id', updateFragrance);
 

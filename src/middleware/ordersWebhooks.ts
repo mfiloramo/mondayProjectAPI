@@ -9,9 +9,8 @@ export const handleOrdersWebhook = async (req: Request, res: Response): Promise<
       return;
     }
 
-    // TODO: CHANGE PARENTPATH TO event.type
+    // DESTRUCTURE WEBHOOK EVENT FROM REQUEST BODY
     const { event } = req.body;
-    const parentPath: string | undefined = req.baseUrl.split('/').pop();
 
     // ROUTE WEBHOOK TO ORDERS CONTROLLER
     switch (event.type) {
@@ -22,7 +21,7 @@ export const handleOrdersWebhook = async (req: Request, res: Response): Promise<
         await updateOrderStatus(req, res);
         break;
       case 'item_deleted':
-        // TODO: HANDLE ORDER DELETION IF APPLICABLE
+        // STRETCH FEATURE: HANDLE ORDER DELETION
         // ...
         break;
       default:
@@ -30,6 +29,7 @@ export const handleOrdersWebhook = async (req: Request, res: Response): Promise<
         return;
     }
   } catch (error: any) {
+    // LOG ERROR TO CONSOLE AND SEND 500 STATUS
     res.status(500).send(error);
     console.error(error);
   }
