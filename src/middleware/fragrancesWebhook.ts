@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { addFragrance, updateFragrance, deleteFragrance } from '../controllers/fragrances.controller';
 
 export const handleFragrancesWebhook = async (req: Request, res: Response): Promise<void> => {
+  // TEMPORARY: MISSING ID COLUMN VALUE HANDLING
+  if (req.body.event.columnId === 'text8__1') return;
+
   try {
     console.log(req.body);
     // MONDAY.COM WEBHOOK VERIFIER
