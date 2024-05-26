@@ -126,6 +126,9 @@ export const deleteFragrance = async (req: Request, res: Response): Promise<void
 // DEPRECATED
 export const syncFragrances = async (req: Request, res: Response): Promise<void> => {
   try {
+    // LOCAL FRAGRANCE DATA CLEARING
+    processedItems.clear();
+
     const boardId: string = process.env.BOARD_ID_FRAGRANCES!;
 
     const existingItems = await fetchAllFragrancesFromMonday();
