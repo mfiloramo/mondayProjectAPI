@@ -15,6 +15,7 @@ const mondayApiToken: AxiosInstance = axios.create({
 });
 
 export const selectAllFragrances = async (req: Request, res: Response): Promise<void> => {
+  // SELECT ALL FRAGRANCES
   try {
     const selectAll = await sequelize.query('EXECUTE GetAllFragrances');
     res.send(selectAll[0]);
@@ -25,6 +26,7 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 };
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
+  // ADD NEW FRAGRANCE
   try {
     const { pulseId, pulseName } = req.body.event;
     const id = pulseId;
