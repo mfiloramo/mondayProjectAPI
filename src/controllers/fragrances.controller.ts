@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
-import axios, { AxiosInstance } from 'axios';
+import axios, { Axios, AxiosInstance, AxiosResponse } from 'axios';
+import mondaySdk from 'monday-sdk-js';
 
+const monday = mondaySdk();
 const apiToken: string | undefined = process.env.MONDAY_API_TOKEN;
-const processedItems = new Set();
 
 const mondayApiToken: AxiosInstance = axios.create({
   baseURL: 'https://api.monday.com/v2',
@@ -25,35 +26,24 @@ export const selectAllFragrances = async (req: Request, res: Response): Promise<
 };
 
 export const addFragrance = async (req: Request, res: Response): Promise<void> => {
+  // ADD NEW FRAGRANCE
   try {
     const { pulseId, pulseName } = req.body.event;
-
-    if (processedItems.has(pulseId)) {
-      console.log(`Item ${pulseId} already processed.`);
-      res.status(200).send({ message: 'Item already processed.' });
-    }
-
-    processedItems.add(pulseId);
-    console.log(processedItems);
-
     const id = pulseId;
     const name = pulseName;
 
-    const created_at = new Date().toISOString();
-    const updated_at = new Date().toISOString();
+    const created_at: string = new Date().toISOString();
+    const updated_at: string = new Date().toISOString();
 
-    await sequelize.query('EXECUTE AddFragrance :id, :name, :created_at, :updated_at', {
+    const response: any = await sequelize.query('EXECUTE AddFragrance :id, :name, :created_at, :updated_at', {
       replacements: { id, name, created_at, updated_at },
-    });
-
-    res.status(200).send({ message: 'Fragrance added successfully.' });
+    })
 
   } catch (error: any) {
     res.status(500).send(error);
     console.error(error);
   }
 };
-
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   try {
