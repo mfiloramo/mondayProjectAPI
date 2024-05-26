@@ -35,7 +35,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     }
 
     processedItems.add(pulseId);
-    console.log(processedItems);
 
     const id = pulseId;
     const name = pulseName;

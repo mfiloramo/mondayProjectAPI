@@ -39,16 +39,21 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       updated_at
     } = req.body;
 
+    const numberOfKits: number = parseInt(number_of_kits, 10);
+    const fragrance1Id: number = parseInt(fragrance1_id, 10);
+    const fragrance2Id: number = parseInt(fragrance2_id, 10);
+    const fragrance3Id: number = parseInt(fragrance3_id, 10);
+
     const response: any = await sequelize.query(
       'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id',
       {
         replacements: {
           first_name,
           last_name,
-          number_of_kits: parseInt(number_of_kits, 10),
-          fragrance1_id: parseInt(fragrance1_id, 10),
-          fragrance2_id: parseInt(fragrance2_id, 10),
-          fragrance3_id: parseInt(fragrance3_id, 10)
+          number_of_kits: numberOfKits,
+          fragrance1_id: fragrance1Id,
+          fragrance2_id: fragrance2Id,
+          fragrance3_id: fragrance3Id
         }
       }
     );
@@ -64,10 +69,10 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             first_name__1: first_name,
             text__1: last_name,
             status7__1: status,
-            quantity__1: number_of_kits,
-            fragrance_1_id1__1: fragrance1_id,
-            numbers__1: fragrance2_id,
-            fragrance_3_id__1: fragrance3_id,
+            quantity__1: numberOfKits,
+            fragrance_1_id1__1: fragrance1Id,
+            numbers__1: fragrance2Id,
+            fragrance_3_id__1: fragrance3Id,
             text34__1: created_at,
             text4__1: updated_at
           }).replace(/"/g, '\\"')}"
