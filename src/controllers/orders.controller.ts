@@ -51,14 +51,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           first_name,
           last_name,
           number_of_kits: numberOfKits,
-          fragrance1_id: fragrance1Id,
-          fragrance2_id: fragrance2Id,
-          fragrance3_id: fragrance3Id
+          fragrance1_id: fragrance1Id.toString(),
+          fragrance2_id: fragrance2Id.toString(),
+          fragrance3_id: fragrance3Id.toString()
         }
       }
     );
 
-    const orderId = response[0][0].NewOrderID;
+    const orderId: number = response[0][0].NewOrderID;
 
     const mutation: string = `
       mutation {
@@ -70,9 +70,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             text__1: last_name,
             status7__1: status,
             quantity__1: numberOfKits,
-            fragrance_1_id1__1: fragrance1Id,
-            numbers__1: fragrance2Id,
-            fragrance_3_id__1: fragrance3Id,
+            fragrance_1_id1__1: fragrance1Id.toString(),
+            numbers__1: fragrance2Id.toString(),
+            fragrance_3_id__1: fragrance3Id.toString(),
             text34__1: created_at,
             text4__1: updated_at
           }).replace(/"/g, '\\"')}"
@@ -88,7 +88,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     }
 
     res.json({ orderId });
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).send(error);
     console.error(error);
   }
