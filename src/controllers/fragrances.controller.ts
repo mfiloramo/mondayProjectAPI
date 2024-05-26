@@ -85,12 +85,10 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
         image_url = value.value;
         break;
       case 'Created At':
-        console.log(value)
-        created_at = new Date(value.value).toISOString();
+        created_at = new Date(value.value.split('\t')[0]).toISOString();
         break;
       case 'Updated At':
-        console.log(value)
-        updated_at = new Date(value.value).toISOString();
+        updated_at = new Date(value.value.split('\t')[0]).toISOString();
         break;
       default:
         res.status(400).send('Unknown column ID');
