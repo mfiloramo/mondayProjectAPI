@@ -125,6 +125,14 @@ npm run dev
 ```
 This command leverages both `ts-node` and `nodemon` to listen for changes within the application files. Once triggered, it will automatically transpile the TypeScript to JavaScript and restart the Node.js server.
 
+## Deployment
+
+This project is deployed on Heroku, leveraging its platform for scalable and reliable application hosting.
+
+### Automated CI/CD Pipeline
+
+Heroku provides an automated CI/CD pipeline that ensures seamless deployment with every push to the `main` branch. This setup automates the build, test, and deployment processes, reducing manual intervention and potential errors. Heroku automatically detects the necessary buildpacks for Node.js projects, sets up the environment, and runs the build process.
+
 ## Tech Stack
 
 This project utilizes a modern tech stack to ensure both robustness and ease of development. Below is a brief overview of the technologies used and why they were chosen.
