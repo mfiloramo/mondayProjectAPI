@@ -1,4 +1,4 @@
-# Fragrance & Order Management API
+<img src="src/assets/monday-api-banner.png" width="100%" alt="monday-api-banner">
 
 This API provides a backend for managing fragrances and orders, specifically integrated with the Monday.com platform. It handles CRUD operations, synchronization with Monday.com boards, and processing of webhooks triggered by events on the Monday.com interface.
 
