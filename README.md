@@ -144,6 +144,16 @@ This project utilizes a modern tech stack to ensure both robustness and ease of 
 <table style="border-collapse: collapse; border: none;">
   <tr>
     <td style="padding: 10px;">
+      <img src="src/assets/typescript-logo.png" height="45"><br>
+      A statically typed superset of JavaScript that enhances code quality and readability. Chosen for its robust type-checking and improved developer productivity.
+    </td>
+    <td style="padding: 10px;">
+      <img src="src/assets/ts-node-logo.png" height="55"><br>
+      A TypeScript execution engine for Node.js. Chosen for its seamless integration, allowing on-the-fly TypeScript compilation and execution.
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">
       <img src="src/assets/node-logo.png" height="50"><br>
       A powerful JavaScript runtime for building scalable applications. Chosen for its performance and asynchronous capabilities.
     </td>
