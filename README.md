@@ -127,7 +127,7 @@ This command leverages both `ts-node` and `nodemon` to listen for changes within
 
 ## Deployment
 
-This project is deployed on Heroku, leveraging its platform for scalable and reliable application hosting.
+This project is deployed on Heroku, leveraging its platform for reliable and user-friendly application hosting.
 
 ### Automated CI/CD Pipeline
 
