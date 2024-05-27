@@ -123,7 +123,7 @@ npm start
 ```
 This will start the server on the port specified in the `.env` file. The server will listen for incoming API requests and process webhooks from Monday.com.
 
-For running the server in development, use the following command
+For running the server in development, use the following command:
 ```bash
 npm run dev
 ```

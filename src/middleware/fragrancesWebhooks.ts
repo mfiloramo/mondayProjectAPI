@@ -18,6 +18,9 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
     // DESTRUCTURE WEBHOOK EVENT FROM REQUEST BODY
     const { event } = req.body;
 
+    // DEBUG: LOG EVENT
+    console.log({ event });
+
     // ROUTE WEBHOOK TO FRAGRANCES CONTROLLER
     switch (event.type) {
       case 'create_pulse':
