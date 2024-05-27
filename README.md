@@ -125,43 +125,44 @@ npm run dev
 ```
 This command leverages both `ts-node` and `nodemon` to listen for changes within the application files. Once triggered, it will automatically transpile the TypeScript to JavaScript and restart the Node.js server.
 
-### Tech Stack
+## Tech Stack
 
 This project utilizes a modern tech stack to ensure both robustness and ease of development. Below is a brief overview of the technologies used and why they were chosen.
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 5px; margin-top: 30px">
-
-   <div>
+<table style="border-collapse: collapse; border: none;">
+  <tr>
+    <td style="padding: 10px;">
       <img src="src/assets/node-logo.png" height="50"><br>
       A powerful JavaScript runtime for building scalable applications. Chosen for its performance and asynchronous capabilities.
-   </div>
-   
-   <div style="margin-top: 15px">
+    </td>
+    <td style="padding: 10px;">
       <img src="src/assets/express-logo.png" height="40"><br>
       A minimal web framework for Node.js. Chosen for its simplicity and robust feature set for building APIs.
-   </div>
-   
-   <div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">
       <img src="src/assets/sequelize-logo.png" height="50"><br>
       A promise-based ORM for SQL databases. Chosen for its ease of use and support for various SQL databases.
-   </div>
-   
-   <div>
+    </td>
+    <td style="padding: 10px;">
       <img src="src/assets/sql-server-logo.png" height="45"><br>
       A reliable relational database management system. Chosen for its robust support for complex queries and stored procedures.
-   </div>
-   
-   <div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">
       <img src="src/assets/axios-logo.png" height="30"><br>
       A promise-based HTTP client. Chosen for its simplicity in making HTTP requests to external services like the Monday.com API.
-   </div>
-   
-   <div>
+    </td>
+    <td style="padding: 10px;">
       <img src="src/assets/monday-sdk.png" height="35"><br>
       Tools to integrate with the Monday.com platform. Chosen for seamless integration and synchronization with Monday.com boards.
-   </div>
+    </td>
+  </tr>
+</table>
 
-</div>
+
 
 
 ## Application Flow
