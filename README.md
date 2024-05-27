@@ -4,6 +4,8 @@
 
 This API provides a backend for managing fragrances and orders, specifically integrated with the Monday.com platform. It handles CRUD operations, synchronization with Monday.com boards, and processing of webhooks triggered by events on the Monday.com interface.
 
+<hr>
+
 ## Table of Contents
 
 - [Installation](#installation)
