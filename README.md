@@ -1,4 +1,6 @@
-<img src="src/assets/monday-api-banner.png" width="100%" alt="monday-api-banner">
+<p align="center">
+   <img src="src/assets/monday-api-banner.png" width="100%" alt="monday-api-banner">
+</p>
 
 This API provides a backend for managing fragrances and orders, specifically integrated with the Monday.com platform. It handles CRUD operations, synchronization with Monday.com boards, and processing of webhooks triggered by events on the Monday.com interface.
 
@@ -171,10 +173,10 @@ This project utilizes a modern tech stack to ensure both robustness and ease of 
 </table>
 
 
-
-
 ## Application Flow
 Below is a diagram illustrating the flow of data within the API. Data flows from the server to the API, which processes requests by firing stored procedures that interact with the database, and updates are synchronized with Monday.com via webhooks.
 
-<img src="src/assets/monday-api-flow.drawio.svg" height="240">
+<p align="center">
+   <img src="src/assets/monday-api-flow.drawio.svg" width="100%">
+</p>
 <br><br>
