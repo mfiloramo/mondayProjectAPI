@@ -81,7 +81,7 @@ The API provides endpoints for managing fragrances and orders, integrating with 
 - **GET `/api/fragrances`**: Retrieve all fragrances.
 - **POST `/api/fragrances`**: Add a new fragrance.
 - **PUT `/api/fragrances/:id`**: Update an existing fragrance.
-- **POST `/api/fragrances/webhook`**: Handle webhooks from Monday.com for fragrances.
+- **POST `/api/fragrances/webhook`**: Handle webhooks from Monday.com for fragrances (including fragrance deletion).
 
 #### Orders
 
