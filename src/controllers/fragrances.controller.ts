@@ -132,23 +132,23 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     // TODO: DEBUG: VERIFY MONDAY.COM API TOKEN
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
-      console.log("Success! Monday API Response: ", mondayResponse.data);
+      console.log("Success! Monday API Response: ", mondayResponse.data.data.boards[0]);
     }
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
-    const mutation: string = `
-    mutation {
-      change_column_value(item_id: ${ id }, board_id: ${ process.env.BOARD_ID_FRAGRANCES }, column_id: "text2__1", value: "${ updated_at }") {
-        id
-      }
-    }
-  `;
-
-    // VERIFY MONDAY.COM API TOKEN
-    if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-      console.log("Success! Monday API Response: ", mondayResponse.data);
-    }
+  //   const mutation: string = `
+  //   mutation {
+  //     change_column_value(item_id: ${ id }, board_id: ${ process.env.BOARD_ID_FRAGRANCES }, column_id: "text2__1", value: "${ updated_at }") {
+  //       id
+  //     }
+  //   }
+  // `;
+  //
+  //   // VERIFY MONDAY.COM API TOKEN
+  //   if (apiToken) {
+  //     const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+  //     console.log("Success! Monday API Response: ", mondayResponse.data);
+  //   }
 
     res.status(200).send({ message: 'Fragrance updated successfully.' });
 
