@@ -56,7 +56,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation: string = `
     mutation {
-      change_column_value(item_id: ${ id }, board_id: ${ process.env.BOARD_ID_FRAGRANCES }, column_id: "updated_at_column_id", value: "${ updated_at }") {
+      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "text2__1", value: "${updated_at}") {
         id
       }
     }
@@ -115,6 +115,24 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
       replacements: { id, name, description, category, updated_at, image_url },
     });
+
+    // TODO: DEBUG: LOG COLUMN_VALUES
+    const query: string = `
+    query {
+      boards(ids: YOUR_BOARD_ID) {
+        columns {
+          id
+          title
+        }
+      }
+    }
+    `;
+
+    // TODO: DEBUG: VERIFY MONDAY.COM API TOKEN
+    if (apiToken) {
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
+      console.log("Success! Monday API Response: ", mondayResponse.data);
+    }
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
     const mutation: string = `
