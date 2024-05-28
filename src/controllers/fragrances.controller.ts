@@ -124,7 +124,7 @@ const query = `
 `;
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
-      console.log("Monday API Response: ", mondayResponse.data);
+      console.log("Monday API Response: ", mondayResponse.data.data.boards[0]);
     }
 
     // DESTRUCTURE DATA FROM MONDAY.COM UPDATE EVENT
