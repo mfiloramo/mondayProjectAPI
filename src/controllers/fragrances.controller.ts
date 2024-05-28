@@ -57,7 +57,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation: string = `
     mutation {
-      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "text2__1", value: "${ dayjs(updated_at).format('MMMM D, YYYY') }") {
+      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "text2__1", value: "${dayjs(updated_at).format('MMMM D, YYYY')}") {
         id
       }
     }
@@ -138,7 +138,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
     const mutation: string = `
     mutation {
-      change_column_value(item_id: ${ id }, board_id: ${ process.env.BOARD_ID_FRAGRANCES }, column_id: "text2__1", value: "${ dayjs(updated_at).format('MMMM D, YYYY') }") {
+      change_column_value(item_id: ${ id }, board_id: ${ process.env.BOARD_ID_FRAGRANCES }, column_id: "text2__1", value: "${ updated_at }") {
         id
       }
     }
