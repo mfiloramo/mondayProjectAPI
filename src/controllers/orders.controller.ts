@@ -27,6 +27,22 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   // CREATE NEW ORDER
   try {
+    const query = `
+          query {
+            boards (ids: ${ process.env.BOARD_ID_ORDERS}) {
+              columns {
+                id
+                title
+              }
+            }
+          }
+    `;
+    if (apiToken) {
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
+      console.log("Monday API Response: ", mondayResponse.data.data.boards[0]);
+    }
+
+
     const {
       first_name,
       last_name,

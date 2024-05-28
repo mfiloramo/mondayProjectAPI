@@ -76,11 +76,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
       replacements: { id, name, created_at, updated_at },
     });
 
-    // FETCH BOARD COLUMNS
-    const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
-
-    console.log({ id });
-
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation: string = `
       mutation {
@@ -115,21 +110,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   // UPDATE FRAGRANCE
   try {
-const query = `
-      query {
-        boards (ids: ${ process.env.BOARD_ID_FRAGRANCES}) {
-          columns {
-            id
-            title
-          }
-        }
-      }
-`;
-    if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
-      console.log("Monday API Response: ", mondayResponse.data.data.boards[0]);
-    }
-
     // DESTRUCTURE DATA FROM MONDAY.COM UPDATE EVENT
     const { pulseId, pulseName, columnTitle, value } = req.body.event;
 
