@@ -85,6 +85,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
         change_multiple_column_values(item_id: ${ id },
           board_id: ${process.env.BOARD_ID_FRAGRANCES},
           column_values: "${JSON.stringify({
+            text8__1: id,
             text1__1: dayjs(created_at).format('MMMM D, YYYY'),
             text2__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"
