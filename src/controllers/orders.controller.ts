@@ -117,6 +117,10 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     const status = req.body.event.value.label.text;
     const id = req.body.event.pulseName;
 
+    if (typeof id !== 'number') {
+      res.status(404).send('Invalid order ID');
+    }
+
     // LEVERAGE ORM TO UPDATE RECORD IN DATABASE
     await sequelize.query('EXECUTE UpdateOrderStatus :id, :status', {
       replacements: { id, status }
@@ -134,6 +138,7 @@ export const deleteOrder = async (req: Request, res: Response): Promise<void> =>
   // SELECT ALL ORDERS
   try {
     const id: number = parseInt(req.body.event.itemName);
+    if ()
     const response = await sequelize.query('EXECUTE DeleteOrder :id', {
       replacements: { id }
     });
