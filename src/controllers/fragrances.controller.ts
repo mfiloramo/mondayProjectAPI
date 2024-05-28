@@ -79,13 +79,15 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     // FETCH BOARD COLUMNS
     const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
 
+    console.log({ id });
+
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation: string = `
       mutation {
         change_multiple_column_values(item_id: ${ id },
           board_id: ${process.env.BOARD_ID_FRAGRANCES},
           column_values: "${JSON.stringify({
-            text8__1: id,
+            text8__1: id.toString(),
             text1__1: dayjs(created_at).format('MMMM D, YYYY'),
             text2__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"
