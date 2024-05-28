@@ -83,9 +83,12 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     // GET FRAGRANCE NAMES
     const fragranceIds: bigint[] = [ fragrance1Id, fragrance2Id, fragrance3Id ];
-    for (let fragrance of fragranceIds) {
-      let fragranceName: any = await sequelize.query(`EXECUTE GetFragranceName :id`)
-        .then((response: any): void => fragrance = response);
+    for (let fragranceId of fragranceIds) {
+      let id = fragranceId;
+      let fragranceName: any = await sequelize.query('EXECUTE GetFragranceName :id', {
+        replacements: { id }
+      })
+        .then((response: any): void => fragranceId = response);
     }
 
     console.log(fragranceIds);
