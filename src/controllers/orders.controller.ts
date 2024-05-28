@@ -26,21 +26,6 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
-    const query: string = `
-      query {
-        boards (ids: ${process.env.BOARD_ID_ORDERS}) {
-          columns {
-            id
-            title
-          }
-        }
-      }
-    `;
-    if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query });
-      console.log("Monday API Response: ", mondayResponse.data.data.boards[0]);
-    }
-
     const {
       first_name,
       last_name,
@@ -65,8 +50,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         return result[0].name;
       })
     );
-
-    console.log("Fragrance Names: ", fragranceNames);
 
     const response: any = await sequelize.query(
       'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id',
