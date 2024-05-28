@@ -78,8 +78,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     // FETCH BOARD COLUMNS
     const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
-    const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
-    const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation: string = `
@@ -105,15 +103,30 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     res.status(200).send({ message: 'Fragrance added successfully.' });
 
   } catch (error: any) {
-    // res.status(500).send(error);
     res.status(500).send(error);
-    // console.error(error);
+    res.status(500).send(error);
+    console.error(error);
   }
 };
 
 export const updateFragrance = async (req: Request, res: Response): Promise<void> => {
   // UPDATE FRAGRANCE
   try {
+const query = `
+      query {
+        boards (ids: 1234567890) {
+          columns {
+            id
+            title
+          }
+        }
+      }
+`;
+    if (apiToken) {
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
+      console.log("Monday API Response: ", mondayResponse.data);
+    }
+
     // DESTRUCTURE DATA FROM MONDAY.COM UPDATE EVENT
     const { pulseId, pulseName, columnTitle, value } = req.body.event;
 
@@ -151,13 +164,13 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
     // FETCH BOARD COLUMNS
     const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
-    const updatedAtColumnId = getColumnIdByTitle(columns, 'Updated At');
+    const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
     const mutation: string = `
       mutation {
         change_multiple_column_values(item_id: ${ id },
-          board_id: ${process.env.BOARD_ID_FRAGRANCES},
+          board_id: ${ process.env.BOARD_ID_FRAGRANCES },
           column_values: "${JSON.stringify({
             text2__1: dayjs(updated_at).format('MMMM D, YYYY'),
           }).replace(/"/g, '\\"')}"
@@ -177,7 +190,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
   } catch (error: any) {
     res.status(500).send(error);
-    // console.error(error);
+    console.error(error);
   }
 };
 
