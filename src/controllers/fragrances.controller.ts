@@ -16,6 +16,27 @@ const mondayApiToken: AxiosInstance = axios.create({
   },
 });
 
+// FUNCTION TO FETCH BOARD COLUMNS
+const fetchBoardColumns = async (boardId: string) => {
+  const query = `
+    query {
+      boards(ids: ${boardId}) {
+        columns {
+          id
+          title
+        }
+      }
+    }
+  `;
+  const response: AxiosResponse<any, any> = await mondayApiToken.post('', { query });
+  return response.data.data.boards[0].columns;
+};
+
+const getColumnIdByTitle = (columns: any[], title: string): string | undefined => {
+  const column = columns.find(col => col.title === title);
+  return column ? column.id : undefined;
+};
+
 export const selectAllFragrances = async (req: Request, res: Response): Promise<void> => {
   // SELECT ALL FRAGRANCES
   try {
@@ -54,16 +75,19 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
       replacements: { id, name, created_at, updated_at },
     });
 
-    // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
-    const mutation: string = `
-    mutation {
-      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "text2__1", value: "${dayjs(updated_at).format('MMMM D, YYYY')}") {
-        id
-      }
-    }
-    `;
+    // FETCH BOARD COLUMNS
+    const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
+    const createdAtColumnId = getColumnIdByTitle(columns, 'Created At');
+    const updatedAtColumnId = getColumnIdByTitle(columns, 'Updated At');
 
-    // TODO: PUT DATES IN DAYJS
+    // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
+    const mutation = `
+      mutation {
+        change_multiple_column_values(board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "{\"${createdAtColumnId}\": \"${dayjs(created_at).format('MMMM D, YYYY')}\", \"${updatedAtColumnId}\": \"${dayjs(updated_at).format('MMMM D, YYYY')}\"}") {
+          id
+        }
+      }
+    `;
 
     // VERIFY MONDAY.COM API TOKEN
     if (apiToken) {
@@ -117,38 +141,24 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       replacements: { id, name, description, category, updated_at, image_url },
     });
 
-    // TODO: DEBUG: LOG COLUMN_VALUES
-    const query: string = `
-    query {
-      boards(ids: ${ process.env.BOARD_ID_FRAGRANCES }) {
-        columns {
-          id
-          title
-        }
+    // FETCH BOARD COLUMNS
+    const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
+    const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
+
+    // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
+    const mutation: string = `
+    mutation {
+      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "${updatedAtColumnId}", value: "${dayjs(updated_at).format('MMMM D, YYYY')}") {
+        id
       }
     }
     `;
 
-    // TODO: DEBUG: VERIFY MONDAY.COM API TOKEN
+    // VERIFY MONDAY.COM API TOKEN
     if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
-      console.log("Success! Monday API Response: ", mondayResponse.data.data.boards[0]);
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+      console.log("Success! Monday API Response: ", mondayResponse.data);
     }
-
-    // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
-  //   const mutation: string = `
-  //   mutation {
-  //     change_column_value(item_id: ${ id }, board_id: ${ process.env.BOARD_ID_FRAGRANCES }, column_id: "text2__1", value: "${ updated_at }") {
-  //       id
-  //     }
-  //   }
-  // `;
-  //
-  //   // VERIFY MONDAY.COM API TOKEN
-  //   if (apiToken) {
-  //     const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
-  //     console.log("Success! Monday API Response: ", mondayResponse.data);
-  //   }
 
     res.status(200).send({ message: 'Fragrance updated successfully.' });
 
