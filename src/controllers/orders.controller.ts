@@ -129,3 +129,17 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     console.error(error);
   }
 };
+
+export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
+  // SELECT ALL ORDERS
+  try {
+    const id = req.body.event.pulseName;
+    const response = await sequelize.query('EXECUTE DeleteOrder :id', {
+      replacements: { id }
+    });
+    res.send(response[0]);
+  } catch (error: any) {
+    res.status(500).send(error);
+    console.error(error);
+  }
+};

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createOrder, updateOrderStatus } from '../controllers/orders.controller';
+import { createOrder, deleteOrder, updateOrderStatus } from '../controllers/orders.controller';
 
 export const handleOrdersWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -21,8 +21,7 @@ export const handleOrdersWebhook = async (req: Request, res: Response): Promise<
         await updateOrderStatus(req, res);
         break;
       case 'item_deleted':
-        // STRETCH FEATURE: HANDLE ORDER DELETION
-        // ...
+        await deleteOrder(req, res);
         break;
       default:
         res.status(400).send('Unknown event');
