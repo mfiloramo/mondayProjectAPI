@@ -55,7 +55,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           fragrance2_id: fragranceIds[1],
           fragrance3_id: fragranceIds[2],
           created_at,
-          updated_at,
+          updated_at
         },
       }
     );
