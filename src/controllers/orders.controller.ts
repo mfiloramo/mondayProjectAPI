@@ -131,7 +131,6 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
 };
 
 export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
-  console.log('deleteOrder pinged...');
   // SELECT ALL ORDERS
   try {
     const id = req.body.event.pulseName;
