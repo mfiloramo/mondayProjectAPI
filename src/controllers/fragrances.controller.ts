@@ -81,10 +81,19 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
     const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
 
+    console.log(columns);
+
+
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
-    const update = `
+    const mutation: string = `
       mutation {
-        change_multiple_column_values(board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "{\"${createdAtColumnId}\": \"${created_at}\", \"${updatedAtColumnId}\": \"${updated_at}\"}") {
+        change_multiple_column_values(item_id: ${ id },
+          board_id: ${process.env.BOARD_ID_FRAGRANCES},
+          column_values: "${JSON.stringify({
+            text1__1: dayjs(created_at).format('MMMM D, YYYY'),
+            text2__1: dayjs(updated_at).format('MMMM D, YYYY')
+          }).replace(/"/g, '\\"')}"
+          ) {
           id
         }
       }
@@ -92,15 +101,17 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     // VERIFY MONDAY.COM API TOKEN
     if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: update });
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
       console.log("Success! Monday API Response: ", mondayResponse.data);
     }
 
     res.status(200).send({ message: 'Fragrance added successfully.' });
 
   } catch (error: any) {
+    // res.status(500).send(error);
     res.status(500).send(error);
-    console.error(error);
+    // console.error(error);
+    console.error('silent error');
   }
 };
 
@@ -149,7 +160,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
     const mutation: string = `
     mutation {
-      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "${updatedAtColumnId}", value: "${updated_at}") {
+      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "${updatedAtColumnId}", value: "${dayjs(updated_at).format('MMMM D, YYYY')}") {
         id
       }
     }
