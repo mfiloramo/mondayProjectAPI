@@ -19,8 +19,8 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
     const { event } = req.body;
 
     // FILTER CREATED_AT AND UPDATED_AT EVENTS TO PREVENT WEBHOOK LOOPING
-    if (event.columnTitle === 'Created At' || event.columnTitle === 'Updated At') {
-      res.status(200).send('Fragrance updated successfully');
+    if ((event.columnTitle === 'Created At' || event.columnTitle === 'Updated At') || event.app !== 'monday') {
+      res.status(204).send('Item values created_at and updated_at cannot be manually set');
       return;
     }
 
