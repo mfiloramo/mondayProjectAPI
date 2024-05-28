@@ -81,9 +81,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
     const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
 
-    console.log(columns);
-
-
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation: string = `
       mutation {
@@ -111,7 +108,6 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     // res.status(500).send(error);
     res.status(500).send(error);
     // console.error(error);
-    console.error('silent error');
   }
 };
 
@@ -159,11 +155,16 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
     const mutation: string = `
-    mutation {
-      change_column_value(item_id: ${id}, board_id: ${process.env.BOARD_ID_FRAGRANCES}, column_id: "${updatedAtColumnId}", value: "${dayjs(updated_at).format('MMMM D, YYYY')}") {
-        id
+      mutation {
+        change_multiple_column_values(item_id: ${ id },
+          board_id: ${process.env.BOARD_ID_FRAGRANCES},
+          column_values: "${JSON.stringify({
+            text1__1: dayjs(updated_at).format('MMMM D, YYYY'),
+          }).replace(/"/g, '\\"')}"
+          ) {
+          id
+        }
       }
-    }
     `;
 
     // VERIFY MONDAY.COM API TOKEN
@@ -176,7 +177,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
   } catch (error: any) {
     res.status(500).send(error);
-    console.error(error);
+    // console.error(error);
   }
 };
 
