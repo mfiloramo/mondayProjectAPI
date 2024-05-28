@@ -84,8 +84,8 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
           item_name: "${ id }",
           column_values: "${JSON.stringify({
             name: name,
-            text1__1: dayjs(created_at).format('MMMM D, YYYY'),
-            text2__1: dayjs(updated_at).format('MMMM D, YYYY')
+            // text1__1: dayjs(created_at).format('MMMM D, YYYY'),
+            // text2__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"
         ) {
           id
@@ -93,28 +93,25 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
         }
       }`;
 
-    // // FETCH BOARD COLUMNS
-    // const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
-    // const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
-    // const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
-    // console.log(columns);
-    //
-    //
-    //
-    //
-    //
-    // // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
-    // const mutation = `
-    //   mutation {
-    //     change_multiple_column_values(board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "{\"${createdAtColumnId}\": \"${dayjs(created_at).format('MMMM D, YYYY')}\", \"${updatedAtColumnId}\": \"${dayjs(updated_at).format('MMMM D, YYYY')}\"}") {
-    //       id
-    //     }
-    //   }
-    // `;
+    // FETCH BOARD COLUMNS
+    const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
+    const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
+    const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
+    console.log(columns);
+
+
+    // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
+    const update = `
+      mutation {
+        change_multiple_column_values(board_id: ${process.env.BOARD_ID_FRAGRANCES}, item_id: ${id}, column_values: "{\"${createdAtColumnId}\": \"${dayjs(created_at).format('MMMM D, YYYY')}\", \"${updatedAtColumnId}\": \"${dayjs(updated_at).format('MMMM D, YYYY')}\"}") {
+          id
+        }
+      }
+    `;
 
     // VERIFY MONDAY.COM API TOKEN
     if (apiToken) {
-      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
+      const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: update });
       console.log("Success! Monday API Response: ", mondayResponse.data);
     }
 
