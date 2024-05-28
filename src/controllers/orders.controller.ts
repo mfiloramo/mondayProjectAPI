@@ -76,9 +76,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             text__1: last_name,
             status7__1: status,
             quantity__1: numberOfKits,
-            fragrance_1_id1__1: fragrance1Id,
-            numbers__1: fragrance2Id,
-            fragrance_3_id__1: fragrance3Id,
+            fragrance_1_id1__1: 'fragrance1Id', // ADD FRAGRANCE NAME HERE
+            numbers__1: 'fragrance2Id', // ADD FRAGRANCE NAME HERE
+            fragrance_3_id__1: 'fragrance3Id', // ADD FRAGRANCE NAME HERE
             text34__1: dayjs(created_at).format('MMMM D, YYYY'),
             text4__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"

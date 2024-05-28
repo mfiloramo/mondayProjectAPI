@@ -174,12 +174,12 @@ This project utilizes a modern tech stack to ensure both robustness and ease of 
   </tr>
   <tr>
     <td style="padding: 10px;">
-      <img src="src/assets/axios-logo.png" height="30"><br>
-      A promise-based HTTP client. Chosen for its simplicity in making HTTP requests to external services like the Monday.com API.
-    </td>
-    <td style="padding: 10px;">
       <img src="src/assets/monday-sdk.png" height="35"><br>
       Tools to integrate with the Monday.com platform. Chosen for seamless integration and synchronization with Monday.com boards.
+    </td>
+    <td style="padding: 10px;">
+      <img src="src/assets/axios-logo.png" height="30"><br>
+      A promise-based HTTP client. Chosen for its simplicity in making HTTP requests to external services like the Monday.com API.
     </td>
   </tr>
 </table>
