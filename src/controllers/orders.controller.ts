@@ -58,8 +58,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           updated_at,
         },
       }
-    )
-      .then((response: any): void => console.log(response));
+    );
 
     // FETCH FRAGRANCE NAMES CONCURRENTLY
     const fragranceNames: any[] = await Promise.all(
