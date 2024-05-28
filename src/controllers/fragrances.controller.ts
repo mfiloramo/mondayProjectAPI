@@ -114,7 +114,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
   try {
 const query = `
       query {
-        boards (ids: 1234567890) {
+        boards (ids: ${ process.env.BOARD_ID_FRAGRANCES}) {
           columns {
             id
             title
