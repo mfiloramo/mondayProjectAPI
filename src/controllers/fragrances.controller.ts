@@ -32,6 +32,7 @@ const fetchBoardColumns = async (boardId: string) => {
   return response.data.data.boards[0].columns;
 };
 
+// EXAMPLE FUNCTION TO GET COLUMN IDS BY TITLE
 const getColumnIdByTitle = (columns: any[], title: string): string | undefined => {
   const column = columns.find(col => col.title === title);
   return column ? column.id : undefined;
@@ -77,8 +78,8 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
 
     // FETCH BOARD COLUMNS
     const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
-    const createdAtColumnId = getColumnIdByTitle(columns, 'Created At');
-    const updatedAtColumnId = getColumnIdByTitle(columns, 'Updated At');
+    const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
+    const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation = `
@@ -143,7 +144,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
 
     // FETCH BOARD COLUMNS
     const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
-    const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
+    const updatedAtColumnId = getColumnIdByTitle(columns, 'Updated At');
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
     const mutation: string = `
