@@ -81,6 +81,15 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     // DATABASE OUTPUTS NEW ORDER ID
     const orderId: number = response[0][0].NewOrderID;
 
+    // GET FRAGRANCE NAMES
+    const fragranceIds: bigint[] = [ fragrance1Id, fragrance2Id, fragrance3Id ];
+    for (let fragrance of fragranceIds) {
+      let fragranceName: any = await sequelize.query(`EXECUTE GetFragranceName :id`)
+        .then((response: any): void => fragrance = response);
+    }
+
+    console.log(fragranceIds);
+
     // MUTATION QUERY STRING FOR MONDAY.COM API
     const mutation: string = `
       mutation {
@@ -92,9 +101,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             text__1: last_name,
             status7__1: status,
             quantity__1: numberOfKits,
-            fragrance_1_id6__1: fragrance1_id.toString(),
-            fragrance_2_id__1: fragrance2_id.toString(),
-            fragrance_3_id4__1: fragrance3_id.toString(),
+            fragrance_1_id6__1: fragrance1_id,
+            fragrance_2_id__1: fragrance2_id,
+            fragrance_3_id4__1: fragrance3_id,
             text34__1: dayjs(created_at).format('MMMM D, YYYY'),
             text4__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"
