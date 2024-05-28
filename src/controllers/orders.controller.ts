@@ -27,15 +27,15 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   // CREATE NEW ORDER
   try {
-    const query = `
-          query {
-            boards (ids: ${ process.env.BOARD_ID_ORDERS}) {
-              columns {
-                id
-                title
-              }
-            }
+    const query: string = `
+      query {
+        boards (ids: ${ process.env.BOARD_ID_ORDERS}) {
+          columns {
+            id
+            title
           }
+        }
+      }
     `;
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
@@ -92,9 +92,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             text__1: last_name,
             status7__1: status,
             quantity__1: numberOfKits,
-            fragrance_1_id1__1: 'fragrance1Id', // ADD FRAGRANCE NAME HERE
-            numbers__1: 'fragrance2Id', // ADD FRAGRANCE NAME HERE
-            fragrance_3_id__1: 'fragrance3Id', // ADD FRAGRANCE NAME HERE
+            fragrance_1_id6__1: fragrance1_id.toString(),
+            fragrance_2_id__1: fragrance2_id.toString(),
+            fragrance_3_id4__1: fragrance3_id.toString(),
             text34__1: dayjs(created_at).format('MMMM D, YYYY'),
             text4__1: dayjs(updated_at).format('MMMM D, YYYY')
           }).replace(/"/g, '\\"')}"
