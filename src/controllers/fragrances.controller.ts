@@ -119,7 +119,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     // TODO: DEBUG: LOG COLUMN_VALUES
     const query: string = `
     query {
-      boards(ids: YOUR_BOARD_ID) {
+      boards(ids: ${ process.env.BOARD_ID_FRAGRANCES }) {
         columns {
           id
           title
