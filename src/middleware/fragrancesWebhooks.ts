@@ -18,6 +18,12 @@ export const handleFragrancesWebhook = async (req: Request, res: Response): Prom
     // DESTRUCTURE WEBHOOK EVENT FROM REQUEST BODY
     const { event } = req.body;
 
+    // FILTER CREATED_AT AND UPDATED_AT EVENTS TO PREVENT WEBHOOK LOOPING
+    if (event.columnTitle === 'Created At' || event.columnTitle === 'Updated At') {
+      res.status(200).send('Fragrance updated successfully');
+      return;
+    }
+
     // DEBUG: LOG EVENT
     console.log({ event });
 

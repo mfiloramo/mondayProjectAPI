@@ -53,6 +53,9 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
       replacements: { id, name, created_at, updated_at },
     });
 
+    // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
+    // ...
+
     res.status(200).send({ message: 'Fragrance added successfully.' });
 
   } catch (error: any) {
@@ -71,8 +74,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
     const id: number = pulseId;
     let name: string | null = null;
     let description: string | null = null;
-    let created_at: string = new Date().toISOString();
-    let updated_at: string | null = null;
+    let updated_at: string | null = new Date().toISOString();
     let category: string | null = null;
     let image_url: string | null = null;
 
@@ -90,20 +92,17 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       case 'Image URL':
         image_url = value.value;
         break;
-      case 'Created At':
-        created_at = new Date(value.value.split('\t')[0]).toISOString();
-        break;
-      case 'Updated At':
-        updated_at = new Date(value.value.split('\t')[0]).toISOString();
-        break;
       default:
         res.status(400).send('Unknown column ID');
         return;
     }
 
+    // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
+    // ...
+
     // EXECUTE STORED PROCEDURE WITH UPDATED VALUES
-    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :created_at, :updated_at, :image_url', {
-      replacements: { id, name, description, category, created_at, updated_at, image_url },
+    const response: void = await sequelize.query('EXECUTE UpdateFragrance :id, :name, :description, :category, :updated_at, :image_url', {
+      replacements: { id, name, description, category, updated_at, image_url },
     })
       .then((response: any): void => {
         // SEND RESPONSE
