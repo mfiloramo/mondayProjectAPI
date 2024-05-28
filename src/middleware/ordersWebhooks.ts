@@ -3,6 +3,7 @@ import { createOrder, deleteOrder, updateOrderStatus } from '../controllers/orde
 
 export const handleOrdersWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log(req.body.event);
     // MONDAY.COM WEBHOOK VERIFIER
     if (req.body.challenge) {
       res.send({ challenge: req.body.challenge });
