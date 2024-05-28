@@ -45,7 +45,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     // LEVERAGE ORM TO QUERY DATABASE
     const response: any = await sequelize.query(
-      'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id',
+      'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id, :created_at, :updated_at',
       {
         replacements: {
           first_name,
