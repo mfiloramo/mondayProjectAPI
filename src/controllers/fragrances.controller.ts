@@ -80,6 +80,7 @@ export const addFragrance = async (req: Request, res: Response): Promise<void> =
     const columns = await fetchBoardColumns(process.env.BOARD_ID_FRAGRANCES!);
     const createdAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Created At');
     const updatedAtColumnId: string | undefined = getColumnIdByTitle(columns, 'Updated At');
+    console.log(columns);
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE CREATED_AT / UPDATED_AT
     const mutation = `
