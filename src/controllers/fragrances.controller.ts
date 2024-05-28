@@ -127,7 +127,7 @@ export const updateFragrance = async (req: Request, res: Response): Promise<void
       `;
 
     const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: query });
-    console.log("Success! Monday API Query: ", mondayResponse.data);
+    console.log("Success! Monday API Query: ", mondayResponse.data.data.boards[0]);
 
 
     // SEND MUTATION QUERY TO MONDAY API TO CHANGE UPDATED_AT
