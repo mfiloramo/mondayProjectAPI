@@ -25,6 +25,7 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
 };
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
+  // CREATE NEW ORDER
   try {
     const {
       first_name,
@@ -36,21 +37,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       status,
     } = req.body;
 
+    // DECLARE VARIABLES FOR NEW ORDER
     const created_at: string = new Date().toISOString();
     const updated_at: string = new Date().toISOString();
     const numberOfKits: number = parseInt(number_of_kits, 10);
     const fragranceIds: bigint[] = [fragrance1_id, fragrance2_id, fragrance3_id];
 
-    // Fetch fragrance names concurrently
-    const fragranceNames: any[] = await Promise.all(
-      fragranceIds.map(async (id: bigint): Promise<any> => {
-        const [result]: any = await sequelize.query('EXECUTE GetFragranceName :id', {
-          replacements: { id },
-        });
-        return result[0].name;
-      })
-    );
-
+    // LEVERAGE ORM TO QUERY DATABASE
     const response: any = await sequelize.query(
       'EXECUTE CreateOrder :first_name, :last_name, :number_of_kits, :fragrance1_id, :fragrance2_id, :fragrance3_id',
       {
@@ -67,8 +60,20 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       }
     );
 
+    // FETCH FRAGRANCE NAMES CONCURRENTLY
+    const fragranceNames: any[] = await Promise.all(
+      fragranceIds.map(async (id: bigint): Promise<any> => {
+        const [result]: any = await sequelize.query('EXECUTE GetFragranceName :id', {
+          replacements: { id },
+        });
+        return result[0].name;
+      })
+    );
+
+    // EXTRACT ORDER ID
     const orderId: number = response[0][0].NewOrderID;
 
+    // USE MONDAY API TO MUTATE RECORD ON MONDAY BOARD
     const mutation: string = `
       mutation {
         create_item (
@@ -91,17 +96,21 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         }
       }`;
 
+    // SEND MONDAY.COM MUTATION QUERY
     if (apiToken) {
       const mondayResponse: AxiosResponse<any, any> = await mondayApiToken.post('', { query: mutation });
       console.log("Success! Monday API Response: ", mondayResponse.data);
     }
 
+    // RETURN NEW ORDER ID
     res.json({ orderId });
   } catch (error) {
+    // HANDLE ERROR
     res.status(500).send(error);
     console.error(error);
   }
 };
+
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   // UPDATE ORDER STATUS
   try {
