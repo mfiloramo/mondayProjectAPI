@@ -133,8 +133,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
 export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
   // SELECT ALL ORDERS
   try {
-    const id = req.body.event.itemId;
-    console.log(req.body.event);
+    const id: number = parseInt(req.body.event.itemName);
     const response = await sequelize.query('EXECUTE DeleteOrder :id', {
       replacements: { id }
     });
