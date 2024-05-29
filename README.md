@@ -2,7 +2,7 @@
    <img src="src/assets/monday-api-banner.png" width="100%" alt="monday-api-banner">
 </p>
 
-This API provides a backend for managing fragrances and orders, specifically integrated with the Monday.com platform. It handles CRUD operations, synchronization with Monday.com boards, and processing of webhooks triggered by events on the Monday.com interface.
+This API provides a backend for managing fragrances and orders, specifically integrated with the Monday.com platform. It handles CRUD operations, synchronization with Monday.com boards, and processing of webhooks triggered by events on the Monday.com interface. This repo is one of three for this application; the Client Application can be found <a href="https://github.com/mfiloramo/mondayProject">here</a>, and the T-SQL Tables and Stored Procedures can be found <a href="https://github.com/mfiloramo/mondayProjectSQL">here</a>.
 
 <hr>
 

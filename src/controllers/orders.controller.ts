@@ -131,12 +131,14 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
 };
 
 export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
-  // SELECT ALL ORDERS
+  // DELETE ORDER FROM DATABASE
   try {
     const id: number = parseInt(req.body.event.itemName);
 
+    // VALIDATE ORDER ID
     if (typeof id !== 'number') {
       res.status(404).send('Invalid order ID');
+      return;
     }
 
     const response = await sequelize.query('EXECUTE DeleteOrder :id', {
