@@ -108,7 +108,7 @@ The API includes webhook handlers to process events from Monday.com boards:
 
 - `item_created`: Creates a new order.
 - `update_column_value`: Updates the status of an order.
-- `item_deleted`: Handles deletion of an order (currently a placeholder).
+- `item_deleted`: Handles deletion of an order.
 
 ### Running the Server
 
